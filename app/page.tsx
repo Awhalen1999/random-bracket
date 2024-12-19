@@ -29,7 +29,7 @@ export default function Page() {
       mx="auto"
       p={4}
       overflowX="auto"
-      height="100vh"
+      height="100%"
       display="flex"
       flexDirection="column"
       justifyContent="center"

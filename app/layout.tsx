@@ -1,5 +1,7 @@
 import { ReactNode } from "react";
 import { Provider } from "@/components/ui/provider";
+import Navbar from "@/components/nav-bar";
+import Footer from "@/components/footer";
 
 export const metadata = {
   title: "RandomBracket",
@@ -10,7 +12,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <Provider>{children}</Provider>
+        <Provider>
+          <Navbar />
+          {children}
+          <Footer />
+        </Provider>
       </body>
     </html>
   );
