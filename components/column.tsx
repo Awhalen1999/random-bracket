@@ -1,4 +1,5 @@
 "use client";
+
 import { Box, Heading, Stack } from "@chakra-ui/react";
 import Matchup from "./matchup";
 
@@ -15,7 +16,7 @@ export default function Column({
   pairs,
   onWinner,
 }: ColumnProps) {
-  const matches = [];
+  const matches: [string, string][] = [];
   for (let i = 0; i < pairs; i++) {
     const c1 = entries[i * 2] || "";
     const c2 = entries[i * 2 + 1] || "";
@@ -27,7 +28,7 @@ export default function Column({
       <Heading as="h3" size="md" mb={4}>
         {title}
       </Heading>
-      <Stack>
+      <Stack spacing={8}>
         {matches.map((m, i) => (
           <Matchup
             key={i}

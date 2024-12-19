@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import { Box, Button, Text, Stack } from "@chakra-ui/react";
 
@@ -12,12 +13,8 @@ export default function Matchup({
   onWinnerSelected,
 }: MatchupProps) {
   const [selectedWinner, setSelectedWinner] = useState<string | null>(null);
-  const c1 = contenders[0];
-  const c2 = contenders[1];
-
-  const c1Known = c1 !== "";
-  const c2Known = c2 !== "";
-  const bothKnown = c1Known && c2Known;
+  const [c1, c2] = contenders;
+  const bothKnown = c1 !== "" && c2 !== "";
 
   const handleSelect = (choice: string) => {
     setSelectedWinner(choice);
@@ -29,8 +26,7 @@ export default function Matchup({
       // Empty slot
       return <Box minH="40px" />;
     }
-    // Known contender
-    // If both known, we can enable button, else disabled.
+
     return (
       <Button
         variant={selectedWinner === contender ? "solid" : "outline"}
@@ -57,7 +53,7 @@ export default function Matchup({
       <Text fontWeight="semibold" mb={2}>
         Matchup
       </Text>
-      <Stack>
+      <Stack spacing={2}>
         {renderContender(c1)}
         {renderContender(c2)}
       </Stack>

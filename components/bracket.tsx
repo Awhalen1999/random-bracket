@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import { Flex, Box, Heading } from "@chakra-ui/react";
 import Column from "./column";
@@ -8,19 +9,17 @@ interface BracketProps {
 }
 
 export default function Bracket({ entries }: BracketProps) {
-  const leftR16 = entries.slice(0, 8); // 8 entries
-  const rightR16 = entries.slice(8, 16); // 8 entries
+  const leftR16 = entries.slice(0, 8);
+  const rightR16 = entries.slice(8, 16);
 
-  // Each round stored as flat arrays:
-  // For a round with N matches, we have N*2 entries.
-  // Empty means no contender yet.
+  // Next rounds start empty
   const [leftQFState, setLeftQFState] = useState(Array(4).fill(""));
   const [leftSFState, setLeftSFState] = useState(Array(2).fill(""));
-  const [leftFState, setLeftFState] = useState(Array(1).fill(""));
+  const [leftFState] = useState(Array(1).fill("")); // Not directly manipulated since we go straight to final
 
   const [rightQFState, setRightQFState] = useState(Array(4).fill(""));
   const [rightSFState, setRightSFState] = useState(Array(2).fill(""));
-  const [rightFState, setRightFState] = useState(Array(1).fill(""));
+  const [rightFState] = useState(Array(1).fill("")); // Not directly manipulated
 
   const [finalState, setFinalState] = useState(Array(2).fill(""));
   const [champion, setChampion] = useState<string>("");
@@ -28,15 +27,12 @@ export default function Bracket({ entries }: BracketProps) {
   function propagateWinner(
     winner: string,
     fromMatchIndex: number,
-    currentRoundSize: number,
     nextRoundSetter: React.Dispatch<React.SetStateAction<string[]>>
   ) {
-    // nextMatchIndex = floor(fromMatchIndex / 2)
-    // slot = fromMatchIndex % 2
-    // nextIndex = nextMatchIndex*2 + slot
     const nextMatchIndex = Math.floor(fromMatchIndex / 2);
     const slot = fromMatchIndex % 2;
     const nextIndex = nextMatchIndex * 2 + slot;
+
     nextRoundSetter((prev) => {
       const newArr = [...prev];
       newArr[nextIndex] = winner;
@@ -67,56 +63,56 @@ export default function Bracket({ entries }: BracketProps) {
       {/* Left Side */}
       <Column
         title="Left Round of 16"
-        entries={leftR16} // 8 entries
+        entries={leftR16}
         pairs={4}
         onWinner={(index, winner) =>
-          propagateWinner(winner, index, 8, setLeftQFState)
+          propagateWinner(winner, index, setLeftQFState)
         }
       />
       <Column
         title="Left Quarterfinals"
-        entries={leftQFState} // 4 entries (2 matches)
+        entries={leftQFState}
         pairs={2}
         onWinner={(index, winner) =>
-          propagateWinner(winner, index, 4, setLeftSFState)
+          propagateWinner(winner, index, setLeftSFState)
         }
       />
       <Column
         title="Left Semifinals"
-        entries={leftSFState} // 2 entries (1 match)
+        entries={leftSFState}
         pairs={1}
-        onWinner={(index, winner) => propagateToFinal(winner, true)}
+        onWinner={(_, winner) => propagateToFinal(winner, true)}
       />
 
       {/* Final */}
       <Column
         title="Final"
-        entries={finalState} // 2 entries
+        entries={finalState}
         pairs={1}
-        onWinner={(index, winner) => propagateChampion(winner)}
+        onWinner={(_, winner) => propagateChampion(winner)}
       />
 
       {/* Right Side */}
       <Column
         title="Right Semifinals"
-        entries={rightSFState} // 2 entries
+        entries={rightSFState}
         pairs={1}
-        onWinner={(index, winner) => propagateToFinal(winner, false)}
+        onWinner={(_, winner) => propagateToFinal(winner, false)}
       />
       <Column
         title="Right Quarterfinals"
-        entries={rightQFState} // 4 entries
+        entries={rightQFState}
         pairs={2}
         onWinner={(index, winner) =>
-          propagateWinner(winner, index, 4, setRightSFState)
+          propagateWinner(winner, index, setRightSFState)
         }
       />
       <Column
         title="Right Round of 16"
-        entries={rightR16} // 8 entries
+        entries={rightR16}
         pairs={4}
         onWinner={(index, winner) =>
-          propagateWinner(winner, index, 8, setRightQFState)
+          propagateWinner(winner, index, setRightQFState)
         }
       />
 

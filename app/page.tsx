@@ -1,4 +1,5 @@
 "use client";
+
 import { Box, Heading, Text } from "@chakra-ui/react";
 import Bracket from "@/components/bracket";
 
