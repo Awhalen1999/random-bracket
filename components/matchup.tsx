@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Box, Button, Text, Stack } from "@chakra-ui/react";
+import { Box, Text, Stack, Button } from "@chakra-ui/react";
 
 interface MatchupProps {
   contenders: string[];
@@ -22,23 +22,53 @@ export default function Matchup({
   };
 
   const renderContender = (contender: string) => {
+    // If empty, just show an empty box
     if (contender === "") {
-      return <Box minH="40px" />;
+      return (
+        <Box
+          width="150px"
+          minH="40px"
+          whiteSpace="normal"
+          wordBreak="break-word"
+          overflowWrap="break-word"
+          borderWidth="1px"
+          borderColor="gray.200"
+          borderRadius="md"
+          p={2}
+        />
+      );
     }
 
+    const isSelected = selectedWinner === contender;
+
+    // Instead of disabling the other option once one is chosen,
+    // we allow the user to switch by always keeping the other option clickable.
+    const isDisabled = !bothKnown; // Only disable if both aren't known
+
     return (
-      <Button
-        variant={selectedWinner === contender ? "solid" : "outline"}
-        colorScheme={selectedWinner === contender ? "blue" : "gray"}
-        isDisabled={
-          !bothKnown ||
-          (selectedWinner !== null && selectedWinner !== contender)
-        }
-        onClick={() => handleSelect(contender)}
+      <Box
+        as="button"
+        onClick={() => !isDisabled && handleSelect(contender)}
+        width="150px"
+        whiteSpace="normal"
+        wordBreak="break-word"
+        overflowWrap="break-word"
+        textAlign="center"
+        borderWidth="1px"
+        borderRadius="md"
+        px={2}
+        py={1}
+        cursor={isDisabled ? "not-allowed" : "pointer"}
+        opacity={isDisabled ? 0.6 : 1}
       >
         {contender}
-      </Button>
+      </Box>
     );
+  };
+
+  const clearSelection = () => {
+    setSelectedWinner(null);
+    onWinnerSelected(""); // if you want to indicate no winner is selected
   };
 
   return (
@@ -46,10 +76,13 @@ export default function Matchup({
       borderWidth="1px"
       borderRadius="md"
       p={4}
-      minW="150px"
       textAlign="center"
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      width="max-content"
     >
-      <Stack spacing={2}>
+      <Stack align="center">
         {renderContender(c1)}
         {renderContender(c2)}
       </Stack>
