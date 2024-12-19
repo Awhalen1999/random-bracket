@@ -9,36 +9,30 @@ interface BracketProps {
 }
 
 export default function Bracket({ entries }: BracketProps) {
-  const leftR16 = entries.slice(0, 8); // 8 entries, 4 matches
-  const rightR16 = entries.slice(8, 16); // 8 entries, 4 matches
+  const leftR16 = entries.slice(0, 8); // Left side Round of 16
+  const rightR16 = entries.slice(8, 16); // Right side Round of 16
 
-  // State for downstream rounds
-  const [leftQFState, setLeftQFState] = useState(Array(4).fill(""));
-  const [leftSFState, setLeftSFState] = useState(Array(2).fill(""));
-  const [leftFinalist, setLeftFinalist] = useState(Array(1).fill(""));
+  // State for subsequent rounds
+  const [leftQFState, setLeftQFState] = useState(Array(4).fill("")); // Left Quarterfinals
+  const [leftSFState, setLeftSFState] = useState(Array(2).fill("")); // Left Semifinal
 
-  const [rightQFState, setRightQFState] = useState(Array(4).fill(""));
-  const [rightSFState, setRightSFState] = useState(Array(2).fill(""));
-  const [rightFinalist, setRightFinalist] = useState(Array(1).fill(""));
+  const [rightQFState, setRightQFState] = useState(Array(4).fill("")); // Right Quarterfinals
+  const [rightSFState, setRightSFState] = useState(Array(2).fill("")); // Right Semifinal
 
-  const [finalState, setFinalState] = useState(Array(2).fill(""));
+  const [finalState, setFinalState] = useState(Array(2).fill("")); // Final (2 entries: left finalist, right finalist)
   const [champion, setChampion] = useState<string>("");
 
   function cleanupOldWinner(oldWinner: string) {
     if (!oldWinner) return;
-    // Remove oldWinner from all arrays
     const removeFromArray = (arr: string[]) =>
       arr.map((val) => (val === oldWinner ? "" : val));
 
     setLeftQFState((prev) => removeFromArray(prev));
     setLeftSFState((prev) => removeFromArray(prev));
-    setLeftFinalist((prev) => removeFromArray(prev));
     setRightQFState((prev) => removeFromArray(prev));
     setRightSFState((prev) => removeFromArray(prev));
-    setRightFinalist((prev) => removeFromArray(prev));
     setFinalState((prev) => removeFromArray(prev));
 
-    // If champion was oldWinner, remove it
     if (champion === oldWinner) {
       setChampion("");
     }
@@ -47,11 +41,9 @@ export default function Bracket({ entries }: BracketProps) {
   function propagateWinner(
     winner: string,
     fromMatchIndex: number,
-    nextRoundSetter: React.Dispatch<React.SetStateAction<string[]>>,
-    currentRoundSize: number
+    nextRoundSetter: React.Dispatch<React.SetStateAction<string[]>>
   ) {
-    // Determine where to put this winner in next round
-    // Each pair in next round is formed by 2 matches from the previous round.
+    // Calculate next index in the next round's array
     const nextMatchIndex = Math.floor(fromMatchIndex / 2);
     const slot = fromMatchIndex % 2;
     const nextIndex = nextMatchIndex * 2 + slot;
@@ -61,7 +53,6 @@ export default function Bracket({ entries }: BracketProps) {
       const oldWinner = newArr[nextIndex];
       if (oldWinner !== winner) {
         newArr[nextIndex] = winner;
-        // If we replaced an old winner, cleanup
         if (oldWinner && oldWinner !== "" && oldWinner !== winner) {
           cleanupOldWinner(oldWinner);
         }
@@ -70,9 +61,8 @@ export default function Bracket({ entries }: BracketProps) {
     });
   }
 
-  // Special propagate for SF -> Final and Final -> Champion
-  function propagateToFinal(winner: string, isLeftSide: boolean) {
-    // For finalState: index 0 = left finalist, index 1 = right finalist
+  function propagateToFinalFromSF(winner: string, isLeftSide: boolean) {
+    // FinalState: [0] = left finalist, [1] = right finalist
     const index = isLeftSide ? 0 : 1;
     setFinalState((prev) => {
       const newArr = [...prev];
@@ -88,8 +78,7 @@ export default function Bracket({ entries }: BracketProps) {
   }
 
   function propagateChampion(winner: string) {
-    if (champion !== winner && champion) {
-      // If old champion changed, cleanup old champion
+    if (champion && champion !== winner) {
       cleanupOldWinner(champion);
     }
     setChampion(winner);
@@ -109,7 +98,7 @@ export default function Bracket({ entries }: BracketProps) {
         entries={leftR16}
         pairs={4}
         onWinner={(matchIndex, winner) =>
-          propagateWinner(winner, matchIndex, setLeftQFState, 8)
+          propagateWinner(winner, matchIndex, setLeftQFState)
         }
       />
       <Column
@@ -117,7 +106,7 @@ export default function Bracket({ entries }: BracketProps) {
         entries={leftQFState}
         pairs={2}
         onWinner={(matchIndex, winner) =>
-          propagateWinner(winner, matchIndex, setLeftSFState, 4)
+          propagateWinner(winner, matchIndex, setLeftSFState)
         }
       />
       <Column
@@ -125,19 +114,8 @@ export default function Bracket({ entries }: BracketProps) {
         entries={leftSFState}
         pairs={1}
         onWinner={(matchIndex, winner) => {
-          // SF to finalist is like propagateWinner but there's only one slot
-          // Actually we have leftFinalist[0]
-          setLeftFinalist((prev) => {
-            const oldWinner = prev[0];
-            if (oldWinner !== winner) {
-              const newArr = [winner];
-              if (oldWinner && oldWinner !== winner) {
-                cleanupOldWinner(oldWinner);
-              }
-              return newArr;
-            }
-            return prev;
-          });
+          // Left SF winner goes directly into finalState[0]
+          propagateToFinalFromSF(winner, true);
         }}
       />
 
@@ -147,8 +125,7 @@ export default function Bracket({ entries }: BracketProps) {
         entries={finalState}
         pairs={1}
         onWinner={(matchIndex, winner) => {
-          // Final chosen winner = champion
-          // Note: If finalState changed from oldWinner to winner, already cleaned up in propagate logic
+          // Selecting final winner sets champion
           propagateChampion(winner);
         }}
       />
@@ -159,17 +136,8 @@ export default function Bracket({ entries }: BracketProps) {
         entries={rightSFState}
         pairs={1}
         onWinner={(matchIndex, winner) => {
-          setRightFinalist((prev) => {
-            const oldWinner = prev[0];
-            if (oldWinner !== winner) {
-              const newArr = [winner];
-              if (oldWinner && oldWinner !== winner) {
-                cleanupOldWinner(oldWinner);
-              }
-              return newArr;
-            }
-            return prev;
-          });
+          // Right SF winner goes directly into finalState[1]
+          propagateToFinalFromSF(winner, false);
         }}
       />
       <Column
@@ -177,7 +145,7 @@ export default function Bracket({ entries }: BracketProps) {
         entries={rightQFState}
         pairs={2}
         onWinner={(matchIndex, winner) =>
-          propagateWinner(winner, matchIndex, setRightSFState, 4)
+          propagateWinner(winner, matchIndex, setRightSFState)
         }
       />
       <Column
@@ -185,7 +153,7 @@ export default function Bracket({ entries }: BracketProps) {
         entries={rightR16}
         pairs={4}
         onWinner={(matchIndex, winner) =>
-          propagateWinner(winner, matchIndex, setRightQFState, 8)
+          propagateWinner(winner, matchIndex, setRightQFState)
         }
       />
 
