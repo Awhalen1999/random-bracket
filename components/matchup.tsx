@@ -23,7 +23,6 @@ export default function Matchup({
 
   const renderContender = (contender: string) => {
     if (contender === "") {
-      // Empty slot
       return <Box minH="40px" />;
     }
 
