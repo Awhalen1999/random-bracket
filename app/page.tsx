@@ -35,8 +35,8 @@ export default function Page() {
       justifyContent="center"
     >
       <Text mb={4} textAlign="center">
-        Every 24h we generate 16 random funny items. Pick winners and watch them
-        advance instantly!
+        Every 24 hours we generate 16 random things. Pick a winner march madness
+        bracket style.
       </Text>
       <Bracket entries={initialEntries} />
     </Box>

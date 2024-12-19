@@ -1,8 +1,7 @@
 "use client";
 
-import { Flex, Box, Heading, Button, IconButton } from "@chakra-ui/react";
+import { Flex, Box, Heading, Button } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
-import { FaQuestion } from "react-icons/fa";
 
 export default function Navbar() {
   const router = useRouter();

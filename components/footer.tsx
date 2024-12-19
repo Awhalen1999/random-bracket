@@ -1,11 +1,23 @@
-import { Flex, Text } from "@chakra-ui/react";
+import { Flex, Text, Image, Link, HStack } from "@chakra-ui/react";
+import { FaGithub, FaTwitter } from "react-icons/fa";
 
 export default function Footer() {
   return (
-    <Flex as="footer" p={4} bg="teal.500" color="white" justify="center">
-      <Text>
-        &copy; {new Date().getFullYear()} RandomBracket. All rights reserved.
-      </Text>
+    <Flex as="footer" px={4} justify="space-between" align="center">
+      <HStack>
+        <Text fontSize="md">Inspired by</Text>
+        <Image
+          src="/hivemind-logo.png"
+          alt="Hivemind Logo"
+          height="64px"
+          width="auto"
+        />
+      </HStack>
+      <HStack spacing={4}>
+        <Link href="https://github.com/Awhalen1999" isExternal>
+          <FaGithub />
+        </Link>
+      </HStack>
     </Flex>
   );
 }
