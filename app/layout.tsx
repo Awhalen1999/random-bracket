@@ -4,6 +4,12 @@ import Navbar from "@/components/nav-bar";
 import Footer from "@/components/footer";
 import { Box } from "@chakra-ui/react";
 
+export const metadata = {
+  title: "Random Bracket - Daily Random Thing Tournaments",
+  description:
+    "Inspired by Hivemind, daily 16-team match-ups of completely random things. Pick a winner in a March Madness-style competition!",
+};
+
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
