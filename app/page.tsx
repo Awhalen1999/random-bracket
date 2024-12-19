@@ -25,7 +25,7 @@ const initialEntries = [
 export default function Page() {
   return (
     <Box
-      maxW="95vw"
+      maxW="97vw"
       mx="auto"
       p={4}
       overflowX="auto"
@@ -34,9 +34,6 @@ export default function Page() {
       flexDirection="column"
       justifyContent="center"
     >
-      <Heading as="h1" mb={8} textAlign="center">
-        RandomBracket
-      </Heading>
       <Text mb={4} textAlign="center">
         Every 24h we generate 16 random funny items. Pick winners and watch them
         advance instantly!

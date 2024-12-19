@@ -2,20 +2,18 @@ import { ReactNode } from "react";
 import { Provider } from "@/components/ui/provider";
 import Navbar from "@/components/nav-bar";
 import Footer from "@/components/footer";
-
-export const metadata = {
-  title: "RandomBracket",
-  description: "A 16-team random funny bracket generator",
-};
+import { Box } from "@chakra-ui/react";
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
         <Provider>
-          <Navbar />
-          {children}
-          <Footer />
+          <Box minHeight="100vh" display="flex" flexDirection="column">
+            <Navbar />
+            <Box flex="1">{children}</Box>
+            <Footer />
+          </Box>
         </Provider>
       </body>
     </html>

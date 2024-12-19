@@ -49,9 +49,6 @@ export default function Matchup({
       minW="150px"
       textAlign="center"
     >
-      <Text fontWeight="semibold" mb={2}>
-        Matchup
-      </Text>
       <Stack spacing={2}>
         {renderContender(c1)}
         {renderContender(c2)}

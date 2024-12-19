@@ -130,7 +130,7 @@ export default function Bracket({ entries }: BracketProps) {
     >
       {/* Left Side */}
       <Column
-        title="Left Round of 16"
+        title="Round of 16"
         entries={leftR16}
         pairs={4}
         onWinner={(matchIndex, winner) => {
@@ -139,7 +139,7 @@ export default function Bracket({ entries }: BracketProps) {
         }}
       />
       <Column
-        title="Left Quarterfinals"
+        title="Quarterfinals"
         entries={leftQFState}
         pairs={2}
         onWinner={(matchIndex, winner) => {
@@ -147,7 +147,7 @@ export default function Bracket({ entries }: BracketProps) {
         }}
       />
       <Column
-        title="Left Semifinals"
+        title="Semifinals"
         entries={leftSFState}
         pairs={1}
         onWinner={(matchIndex, winner) => {
@@ -168,7 +168,7 @@ export default function Bracket({ entries }: BracketProps) {
 
       {/* Right Side */}
       <Column
-        title="Right Semifinals"
+        title="Semifinals"
         entries={rightSFState}
         pairs={1}
         onWinner={(matchIndex, winner) => {
@@ -176,7 +176,7 @@ export default function Bracket({ entries }: BracketProps) {
         }}
       />
       <Column
-        title="Right Quarterfinals"
+        title="Quarterfinals"
         entries={rightQFState}
         pairs={2}
         onWinner={(matchIndex, winner) => {
@@ -184,7 +184,7 @@ export default function Bracket({ entries }: BracketProps) {
         }}
       />
       <Column
-        title="Right Round of 16"
+        title="Round of 16"
         entries={rightR16}
         pairs={4}
         onWinner={(matchIndex, winner) => {
