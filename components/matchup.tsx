@@ -1,16 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { Box, Text, Stack, Button } from "@chakra-ui/react";
+import { Box, Stack } from "@chakra-ui/react";
 
 interface MatchupProps {
   contenders: string[];
   onWinnerSelected: (winner: string) => void;
+  colorMap: { [key: string]: string };
 }
 
 export default function Matchup({
   contenders,
   onWinnerSelected,
+  colorMap,
 }: MatchupProps) {
   const [selectedWinner, setSelectedWinner] = useState<string | null>(null);
   const [c1, c2] = contenders;
@@ -22,7 +24,6 @@ export default function Matchup({
   };
 
   const renderContender = (contender: string) => {
-    // If empty, just show an empty box
     if (contender === "") {
       return (
         <Box
@@ -32,7 +33,6 @@ export default function Matchup({
           wordBreak="break-word"
           overflowWrap="break-word"
           borderWidth="1px"
-          borderColor="gray.200"
           borderRadius="md"
           p={2}
         />
@@ -40,14 +40,13 @@ export default function Matchup({
     }
 
     const isSelected = selectedWinner === contender;
-
-    // Instead of disabling the other option once one is chosen,
-    // we allow the user to switch by always keeping the other option clickable.
-    const isDisabled = !bothKnown; // Only disable if both aren't known
+    const isDisabled = !bothKnown;
+    const bgColor = colorMap[contender] || "transparent";
 
     return (
       <Box
         as="button"
+        fontWeight="semibold"
         onClick={() => !isDisabled && handleSelect(contender)}
         width="150px"
         whiteSpace="normal"
@@ -59,16 +58,17 @@ export default function Matchup({
         px={2}
         py={1}
         cursor={isDisabled ? "not-allowed" : "pointer"}
-        opacity={isDisabled ? 0.6 : 1}
+        opacity={isDisabled ? 0.7 : 1}
+        backgroundColor={bgColor}
+        _hover={
+          !isDisabled
+            ? { backgroundColor: isSelected ? "blue.200" : bgColor }
+            : {}
+        }
       >
         {contender}
       </Box>
     );
-  };
-
-  const clearSelection = () => {
-    setSelectedWinner(null);
-    onWinnerSelected(""); // if you want to indicate no winner is selected
   };
 
   return (

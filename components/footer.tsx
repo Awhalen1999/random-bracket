@@ -13,7 +13,7 @@ export default function Footer() {
           width="auto"
         />
       </HStack>
-      <HStack spacing={4}>
+      <HStack>
         <Link href="https://github.com/Awhalen1999" isExternal>
           <FaGithub />
         </Link>

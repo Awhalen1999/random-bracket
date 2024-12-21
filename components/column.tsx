@@ -8,6 +8,7 @@ interface ColumnProps {
   entries: string[];
   pairs: number;
   onWinner: (matchIndex: number, winner: string) => void;
+  colorMap: { [key: string]: string };
 }
 
 export default function Column({
@@ -15,6 +16,7 @@ export default function Column({
   entries,
   pairs,
   onWinner,
+  colorMap,
 }: ColumnProps) {
   const matches: [string, string][] = [];
   for (let i = 0; i < pairs; i++) {
@@ -28,12 +30,13 @@ export default function Column({
       <Heading as="h3" size="md" mb={4}>
         {title}
       </Heading>
-      <Stack spacing={8}>
+      <Stack>
         {matches.map((m, i) => (
           <Matchup
             key={i}
             contenders={m}
             onWinnerSelected={(winner) => onWinner(i, winner)}
+            colorMap={colorMap}
           />
         ))}
       </Stack>

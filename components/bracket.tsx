@@ -6,12 +6,10 @@ import Column from "./column";
 
 interface BracketProps {
   entries: string[];
+  colorMap: { [key: string]: string }; // New prop for color mapping
 }
 
-// Round levels for reference:
-// R16 = 1, QF = 2, SF = 3, Final = 4
-
-export default function Bracket({ entries }: BracketProps) {
+export default function Bracket({ entries, colorMap }: BracketProps) {
   const leftR16 = entries.slice(0, 8);
   const rightR16 = entries.slice(8, 16);
 
@@ -30,12 +28,6 @@ export default function Bracket({ entries }: BracketProps) {
     const removeFromArray = (arr: string[]) =>
       arr.map((val) => (val === oldWinner ? "" : val));
 
-    // Remove from downstream rounds only:
-    // If fromLevel=1 (R16), remove from QF, SF, Final, champion
-    // If fromLevel=2 (QF), remove from SF, Final, champion
-    // If fromLevel=3 (SF), remove from Final, champion
-    // If fromLevel=4 (Final), remove from champion only
-
     if (fromLevel <= 1) {
       setLeftQFState((prev) => removeFromArray(prev));
       setLeftSFState((prev) => removeFromArray(prev));
@@ -44,17 +36,14 @@ export default function Bracket({ entries }: BracketProps) {
       setFinalState((prev) => removeFromArray(prev));
       if (champion === oldWinner) setChampion("");
     } else if (fromLevel === 2) {
-      // QF changed => remove from SF, Final, champion
       setLeftSFState((prev) => removeFromArray(prev));
       setRightSFState((prev) => removeFromArray(prev));
       setFinalState((prev) => removeFromArray(prev));
       if (champion === oldWinner) setChampion("");
     } else if (fromLevel === 3) {
-      // SF changed => remove from Final, champion
       setFinalState((prev) => removeFromArray(prev));
       if (champion === oldWinner) setChampion("");
     } else if (fromLevel === 4) {
-      // Final changed => remove from champion
       if (champion === oldWinner) setChampion("");
     }
   }
@@ -134,9 +123,9 @@ export default function Bracket({ entries }: BracketProps) {
         entries={leftR16}
         pairs={4}
         onWinner={(matchIndex, winner) => {
-          // R16 to QF is fromLevel = 1
           propagateWinner(winner, matchIndex, setLeftQFState, 1);
         }}
+        colorMap={colorMap}
       />
       <Column
         title="Quarterfinals"
@@ -145,15 +134,16 @@ export default function Bracket({ entries }: BracketProps) {
         onWinner={(matchIndex, winner) => {
           propagateToSF(winner, matchIndex, true);
         }}
+        colorMap={colorMap}
       />
       <Column
         title="Semifinals"
         entries={leftSFState}
         pairs={1}
         onWinner={(matchIndex, winner) => {
-          // SF to Final is fromLevel = 3
           propagateToFinalFromSF(winner, matchIndex, true);
         }}
+        colorMap={colorMap}
       />
 
       {/* Final */}
@@ -164,6 +154,7 @@ export default function Bracket({ entries }: BracketProps) {
         onWinner={(matchIndex, winner) => {
           propagateChampion(winner);
         }}
+        colorMap={colorMap}
       />
 
       {/* Right Side */}
@@ -174,6 +165,7 @@ export default function Bracket({ entries }: BracketProps) {
         onWinner={(matchIndex, winner) => {
           propagateToFinalFromSF(winner, matchIndex, false);
         }}
+        colorMap={colorMap}
       />
       <Column
         title="Quarterfinals"
@@ -182,6 +174,7 @@ export default function Bracket({ entries }: BracketProps) {
         onWinner={(matchIndex, winner) => {
           propagateToSF(winner, matchIndex, false);
         }}
+        colorMap={colorMap}
       />
       <Column
         title="Round of 16"
@@ -190,6 +183,7 @@ export default function Bracket({ entries }: BracketProps) {
         onWinner={(matchIndex, winner) => {
           propagateWinner(winner, matchIndex, setRightQFState, 1);
         }}
+        colorMap={colorMap}
       />
 
       {champion && (
