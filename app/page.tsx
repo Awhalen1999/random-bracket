@@ -1,19 +1,15 @@
-// pages/index.tsx
 "use client";
 
 import { useEffect, useState } from "react";
-import { Box, Text, Spinner, Alert } from "@chakra-ui/react";
+import { Box, Text, Spinner } from "@chakra-ui/react";
 import Bracket from "@/components/bracket";
 
 export default function Page() {
   const [entries, setEntries] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchRandomItems() {
-      setLoading(true);
-      setError(null);
       try {
         const response = await fetch("/api/items");
         const data = await response.json();
@@ -24,9 +20,8 @@ export default function Page() {
         } else {
           throw new Error(data.error || "Failed to fetch random items");
         }
-      } catch (error: any) {
+      } catch (error) {
         console.error("Error fetching random items:", error);
-        setError(error.message || "An unexpected error occurred.");
       } finally {
         setLoading(false);
       }
@@ -40,16 +35,6 @@ export default function Page() {
       <Box textAlign="center" mt={20}>
         <Spinner size="lg" />
         <Text mt={4}>Loading bracket...</Text>
-      </Box>
-    );
-  }
-
-  if (error) {
-    return (
-      <Box textAlign="center" mt={20}>
-        <Alert status="error" maxW="400px" mx="auto">
-          {error}
-        </Alert>
       </Box>
     );
   }
