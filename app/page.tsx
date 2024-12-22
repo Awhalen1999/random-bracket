@@ -1,54 +1,95 @@
+// pages/index.tsx
 "use client";
 
-import { Box, Text } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
+import { Box, Text, Spinner, Alert } from "@chakra-ui/react";
 import Bracket from "@/components/bracket";
 
-const initialEntries = [
-  "Wayne Gretzki",
-  "Chicken Wings",
-  "Polygon",
-  "Blastoise",
-  "The Color Green",
-  "Popeyes",
-  "Bag of Marbles",
-  "Elvis Presley",
-  "Darth Vader",
-  "A Banana Peel",
-  "Cookie Monster",
-  "A Rusty Spoon",
-  "Mount Everest",
-  "A Flamethrower",
-  "Fortnite Dances",
-  "A Rubber Duck",
-];
-
-// 16 distinct colors for each entry
-const colors = [
-  "tomato",
-  "green.700",
-  "blue.500",
-  "yellow.600",
-  "purple.500",
-  "orange.500",
-  "teal.600",
-  "pink.800",
-  "cyan.600",
-  "red.500",
-  "gray.600",
-  "purple.800",
-  "green.600",
-  "brown",
-  "pink.600",
-  "navy",
-];
-
-// Map each entry to a color
-const colorMap: { [key: string]: string } = {};
-initialEntries.forEach((item, index) => {
-  colorMap[item] = colors[index];
-});
-
 export default function Page() {
+  const [entries, setEntries] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchRandomItems() {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await fetch("/api/items");
+        const data = await response.json();
+
+        if (data.success) {
+          // Map items to their names
+          setEntries(data.items.map((item: { name: string }) => item.name));
+        } else {
+          throw new Error(data.error || "Failed to fetch random items");
+        }
+      } catch (error: any) {
+        console.error("Error fetching random items:", error);
+        setError(error.message || "An unexpected error occurred.");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchRandomItems();
+  }, []);
+
+  if (loading) {
+    return (
+      <Box textAlign="center" mt={20}>
+        <Spinner size="lg" />
+        <Text mt={4}>Loading bracket...</Text>
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box textAlign="center" mt={20}>
+        <Alert status="error" maxW="400px" mx="auto">
+          {error}
+        </Alert>
+      </Box>
+    );
+  }
+
+  if (entries.length !== 16) {
+    return (
+      <Box textAlign="center" mt={20}>
+        <Text fontSize="xl" color="red.500">
+          Unable to fetch 16 items. Please try again later.
+        </Text>
+      </Box>
+    );
+  }
+
+  // Define distinct colors for the bracket items
+  const colors = [
+    "tomato",
+    "green.700",
+    "blue.500",
+    "yellow.600",
+    "purple.500",
+    "orange.500",
+    "teal.600",
+    "pink.800",
+    "cyan.600",
+    "red.500",
+    "gray.600",
+    "purple.800",
+    "green.600",
+    "brown",
+    "pink.600",
+    "navy",
+  ];
+
+  // Map items to colors
+  const colorMap: { [key: string]: string } = {};
+  entries.forEach((item, index) => {
+    colorMap[item] = colors[index % colors.length];
+  });
+
   return (
     <Box
       maxW="97vw"
@@ -64,7 +105,7 @@ export default function Page() {
         Every 24 hours we generate 16 random things. Pick a winner march madness
         bracket style.
       </Text>
-      <Bracket entries={initialEntries} colorMap={colorMap} />
+      <Bracket entries={entries} colorMap={colorMap} />
     </Box>
   );
 }

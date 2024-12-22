@@ -5,12 +5,21 @@ import { ObjectId } from "mongodb";
 export async function GET() {
   try {
     const db = await getDb();
-    const items = await db.collection("items").find({}).toArray();
+
+    // Fetch 16 random active items
+    const items = await db
+      .collection("items")
+      .aggregate([
+        { $match: { active: true } }, // Only active items
+        { $sample: { size: 16 } }, // Randomly select 16 items
+      ])
+      .toArray();
+
     return NextResponse.json({ success: true, items });
   } catch (error) {
-    console.error("Error fetching items:", error);
+    console.error("Error fetching random items:", error);
     return NextResponse.json(
-      { success: false, error: "Failed to fetch items" },
+      { success: false, error: "Failed to fetch random items" },
       { status: 500 }
     );
   }
