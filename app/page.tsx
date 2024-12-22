@@ -8,26 +8,30 @@ export default function Page() {
   const [entries, setEntries] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    async function fetchRandomItems() {
-      try {
-        const response = await fetch("/api/items");
-        const data = await response.json();
+  /**
+   * Fetches the daily bracket from the server.
+   */
+  const fetchDailyBracket = async () => {
+    setLoading(true);
 
-        if (data.success) {
-          // Map items to their names
-          setEntries(data.items.map((item: { name: string }) => item.name));
-        } else {
-          throw new Error(data.error || "Failed to fetch random items");
-        }
-      } catch (error) {
-        console.error("Error fetching random items:", error);
-      } finally {
-        setLoading(false);
+    try {
+      const response = await fetch("/api/daily_round");
+      const data = await response.json();
+
+      if (data.success) {
+        setEntries(data.items);
+      } else {
+        throw new Error(data.error || "Failed to fetch daily bracket");
       }
+    } catch (err: any) {
+      console.error("Error fetching daily bracket:", err);
+    } finally {
+      setLoading(false);
     }
+  };
 
-    fetchRandomItems();
+  useEffect(() => {
+    fetchDailyBracket();
   }, []);
 
   if (loading) {
