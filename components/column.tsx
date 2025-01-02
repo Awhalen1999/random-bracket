@@ -35,7 +35,12 @@ export default function Column({
           <Matchup
             key={i}
             contenders={m}
-            onWinnerSelected={(winner) => onWinner(i, winner)}
+            onWinnerSelected={(winner) => {
+              console.log(
+                `[Column] WinnerSelected: "${winner}" for matchIndex: ${i}`
+              );
+              onWinner(i, winner);
+            }}
             colorMap={colorMap}
           />
         ))}

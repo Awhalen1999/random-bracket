@@ -20,6 +20,7 @@ export default function Matchup({
 
   const handleSelect = (choice: string) => {
     setSelectedWinner(choice);
+    console.log(`[Matchup] Selected winner: "${choice}"`);
     onWinnerSelected(choice);
   };
 
@@ -47,7 +48,16 @@ export default function Matchup({
       <Box
         as="button"
         fontWeight="semibold"
-        onClick={() => !isDisabled && handleSelect(contender)}
+        onClick={() => {
+          if (!isDisabled) {
+            console.log(`[Matchup] Contender clicked: "${contender}"`);
+            handleSelect(contender);
+          } else {
+            console.log(
+              `[Matchup] Click ignored for contender: "${contender}"`
+            );
+          }
+        }}
         width="150px"
         whiteSpace="normal"
         wordBreak="break-word"

@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Box, Text, Spinner, Button } from "@chakra-ui/react";
+import { Box, Text, Spinner, VStack, Heading, Link } from "@chakra-ui/react";
 import Bracket from "@/components/bracket";
+import NextLink from "next/link";
 
 export default function Page() {
   const [entries, setEntries] = useState<string[]>([]);
@@ -10,69 +11,89 @@ export default function Page() {
   const [finalWinner, setFinalWinner] = useState<string | null>(null);
   const [alreadyVoted, setAlreadyVoted] = useState(false);
 
-  // Fetch daily bracket
+  /**
+   * Fetch daily bracket
+   */
   const fetchDailyBracket = async () => {
     setLoading(true);
     try {
       const res = await fetch("/api/daily_round");
       const data = await res.json();
+      console.log(`[Frontend] Fetch daily bracket response:`, data);
+
       if (!data.success) {
         throw new Error(data.error || "Failed to fetch daily bracket");
       }
       setEntries(data.items);
     } catch (err) {
-      console.error(err);
+      console.error(`[Frontend] Error fetching daily bracket:`, err);
     } finally {
       setLoading(false);
     }
   };
 
-  // On component mount, check localStorage if user has voted
+  /**
+   * On component mount, check localStorage if user has voted
+   */
   useEffect(() => {
     const today = new Date().toISOString().split("T")[0];
     const localKey = `bracketVoted-${today}`;
     const hasVoted = localStorage.getItem(localKey);
+
     if (hasVoted) {
       setAlreadyVoted(true);
+      // Retrieve the stored winner if available
+      const storedWinner = localStorage.getItem(`bracketWinner-${today}`);
+      if (storedWinner) setFinalWinner(storedWinner);
     }
 
     fetchDailyBracket();
   }, []);
 
-  // When the bracket is done, we’ll have the final winner in state (passed from Bracket)
-  const handleWinnerSelected = (winner: string) => {
-    setFinalWinner(winner);
-  };
+  /**
+   * Handle the final winner selected in the bracket
+   */
+  const handleWinnerSelected = async (winner: string) => {
+    console.log(`[Frontend] Winner selected: "${winner}"`);
 
-  // Submit the winner to the server
-  const handleFinishBracket = async () => {
-    if (!finalWinner) return;
+    if (alreadyVoted) {
+      console.warn(`[Frontend] User has already voted today.`);
+      return;
+    }
 
     try {
       const response = await fetch("/api/results", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ winner: finalWinner }),
+        body: JSON.stringify({ winner }),
       });
 
       const data = await response.json();
+      console.log(`[Frontend] Submit winner response:`, data);
+
       if (!response.ok || !data.success) {
         throw new Error(data.error || "Failed to submit result");
       }
-      alert(`Thanks! You chose: ${finalWinner}`);
 
-      // Mark localStorage so user can't vote again
+      // Mark localStorage so the user can't vote again
       const today = new Date().toISOString().split("T")[0];
-      const localKey = `bracketVoted-${today}`;
-      localStorage.setItem(localKey, "true");
+      localStorage.setItem(`bracketVoted-${today}`, "true");
+      localStorage.setItem(`bracketWinner-${today}`, winner);
 
       setAlreadyVoted(true);
+      setFinalWinner(winner);
+
+      console.log(`[Frontend] Successfully voted for: ${winner}`);
     } catch (err) {
-      console.error(err);
-      alert("Something went wrong. Try again later.");
+      console.error(`[Frontend] Error submitting winner:`, err);
+      // Optional: Display a non-intrusive error message
+      // You can set an error state and conditionally render an error message below
     }
   };
 
+  /**
+   * UI rendering
+   */
   if (loading) {
     return (
       <Box textAlign="center" mt={20}>
@@ -112,7 +133,7 @@ export default function Page() {
     "navy",
   ];
 
-  // Map items to colors
+  // Map each item to a color
   const colorMap: Record<string, string> = {};
   entries.forEach((item, index) => {
     colorMap[item] = colors[index % colors.length];
@@ -129,27 +150,40 @@ export default function Page() {
       flexDirection="column"
       alignItems="center"
     >
-      <Text mb={4} textAlign="center">
-        Every 24 hours we generate 16 random things. Pick a winner bracket
-        style.
-      </Text>
+      <VStack align="center" mb={6}>
+        <Heading size="lg" textAlign="center">
+          Daily Bracket Challenge
+        </Heading>
+        <Text textAlign="center" fontSize="md" color="gray.600">
+          Every 24 hours, we generate 16 random things. Pick your ultimate
+          champion!
+        </Text>
+      </VStack>
 
+      {/* Champion Display */}
+      {finalWinner && (
+        <Box mb={6}>
+          <Heading size="md">Champion: {finalWinner}</Heading>
+        </Box>
+      )}
+
+      {/* The bracket itself */}
       <Bracket
         entries={entries}
         colorMap={colorMap}
         onWinnerSelected={handleWinnerSelected}
       />
 
-      {!alreadyVoted && finalWinner && (
-        <Button mt={4} colorScheme="blue" onClick={handleFinishBracket}>
-          Finish Bracket (Winner: {finalWinner})
-        </Button>
-      )}
-
-      {alreadyVoted && (
-        <Text mt={4} color="green.600">
-          You have already voted today!
-        </Text>
+      {/* Voted Message */}
+      {alreadyVoted && finalWinner && (
+        <Box mt={8} textAlign="center">
+          <Text fontSize="sm" color="gray.600">
+            Already chose a winner for today: <strong>{finalWinner}</strong>.{" "}
+            <NextLink href="/stats" passHref>
+              <Link color="blue.500">Check out today's stats</Link>
+            </NextLink>
+          </Text>
+        </Box>
       )}
     </Box>
   );

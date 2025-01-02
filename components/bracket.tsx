@@ -6,11 +6,15 @@ import Column from "./column";
 
 interface BracketProps {
   entries: string[];
-  colorMap: { [key: string]: string }; // New prop for color mapping
+  colorMap: { [key: string]: string };
   onWinnerSelected: (winner: string) => void;
 }
 
-export default function Bracket({ entries, colorMap }: BracketProps) {
+export default function Bracket({
+  entries,
+  colorMap,
+  onWinnerSelected,
+}: BracketProps) {
   const leftR16 = entries.slice(0, 8);
   const rightR16 = entries.slice(8, 16);
 
@@ -51,12 +55,12 @@ export default function Bracket({ entries, colorMap }: BracketProps) {
 
   function propagateWinner(
     winner: string,
-    fromMatchIndex: number,
+    matchIndex: number,
     nextRoundSetter: React.Dispatch<React.SetStateAction<string[]>>,
     fromLevel: number
   ) {
-    const nextMatchIndex = Math.floor(fromMatchIndex / 2);
-    const slot = fromMatchIndex % 2;
+    const nextMatchIndex = Math.floor(matchIndex / 2);
+    const slot = matchIndex % 2;
     const nextIndex = nextMatchIndex * 2 + slot;
 
     nextRoundSetter((prev) => {
@@ -65,8 +69,12 @@ export default function Bracket({ entries, colorMap }: BracketProps) {
       if (oldWinner !== winner) {
         newArr[nextIndex] = winner;
         if (oldWinner && oldWinner !== "" && oldWinner !== winner) {
+          console.log(`[Bracket] Cleaning up old winner: "${oldWinner}"`);
           cleanupOldWinner(oldWinner, fromLevel);
         }
+        console.log(
+          `[Bracket] Propagating winner: "${winner}" to matchIndex: ${nextIndex}`
+        );
       }
       return newArr;
     });
@@ -95,8 +103,12 @@ export default function Bracket({ entries, colorMap }: BracketProps) {
       if (oldWinner !== winner) {
         newArr[index] = winner;
         if (oldWinner && oldWinner !== "" && oldWinner !== winner) {
+          console.log(`[Bracket] Cleaning up old winner: "${oldWinner}"`);
           cleanupOldWinner(oldWinner, fromLevel);
         }
+        console.log(
+          `[Bracket] Propagating winner: "${winner}" to final state at index: ${index}`
+        );
       }
       return newArr;
     });
@@ -105,9 +117,12 @@ export default function Bracket({ entries, colorMap }: BracketProps) {
   function propagateChampion(winner: string) {
     const fromLevel = 4; // Final to Champion
     if (champion && champion !== winner) {
+      console.log(`[Bracket] Cleaning up old champion: "${champion}"`);
       cleanupOldWinner(champion, fromLevel);
     }
     setChampion(winner);
+    console.log(`[Bracket] Champion selected: "${winner}"`);
+    onWinnerSelected(winner); // Notify parent
   }
 
   return (
@@ -124,6 +139,9 @@ export default function Bracket({ entries, colorMap }: BracketProps) {
         entries={leftR16}
         pairs={4}
         onWinner={(matchIndex, winner) => {
+          console.log(
+            `[Bracket] Round of 16 winner: "${winner}" at matchIndex: ${matchIndex}`
+          );
           propagateWinner(winner, matchIndex, setLeftQFState, 1);
         }}
         colorMap={colorMap}
@@ -133,6 +151,9 @@ export default function Bracket({ entries, colorMap }: BracketProps) {
         entries={leftQFState}
         pairs={2}
         onWinner={(matchIndex, winner) => {
+          console.log(
+            `[Bracket] Quarterfinals winner: "${winner}" at matchIndex: ${matchIndex}`
+          );
           propagateToSF(winner, matchIndex, true);
         }}
         colorMap={colorMap}
@@ -142,6 +163,9 @@ export default function Bracket({ entries, colorMap }: BracketProps) {
         entries={leftSFState}
         pairs={1}
         onWinner={(matchIndex, winner) => {
+          console.log(
+            `[Bracket] Semifinals winner: "${winner}" at matchIndex: ${matchIndex}`
+          );
           propagateToFinalFromSF(winner, matchIndex, true);
         }}
         colorMap={colorMap}
@@ -153,6 +177,9 @@ export default function Bracket({ entries, colorMap }: BracketProps) {
         entries={finalState}
         pairs={1}
         onWinner={(matchIndex, winner) => {
+          console.log(
+            `[Bracket] Final winner: "${winner}" at matchIndex: ${matchIndex}`
+          );
           propagateChampion(winner);
         }}
         colorMap={colorMap}
@@ -164,6 +191,9 @@ export default function Bracket({ entries, colorMap }: BracketProps) {
         entries={rightSFState}
         pairs={1}
         onWinner={(matchIndex, winner) => {
+          console.log(
+            `[Bracket] Semifinals winner: "${winner}" at matchIndex: ${matchIndex}`
+          );
           propagateToFinalFromSF(winner, matchIndex, false);
         }}
         colorMap={colorMap}
@@ -173,6 +203,9 @@ export default function Bracket({ entries, colorMap }: BracketProps) {
         entries={rightQFState}
         pairs={2}
         onWinner={(matchIndex, winner) => {
+          console.log(
+            `[Bracket] Quarterfinals winner: "${winner}" at matchIndex: ${matchIndex}`
+          );
           propagateToSF(winner, matchIndex, false);
         }}
         colorMap={colorMap}
@@ -182,6 +215,9 @@ export default function Bracket({ entries, colorMap }: BracketProps) {
         entries={rightR16}
         pairs={4}
         onWinner={(matchIndex, winner) => {
+          console.log(
+            `[Bracket] Round of 16 winner: "${winner}" at matchIndex: ${matchIndex}`
+          );
           propagateWinner(winner, matchIndex, setRightQFState, 1);
         }}
         colorMap={colorMap}
