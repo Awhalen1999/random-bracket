@@ -6,9 +6,9 @@ export async function GET() {
     const results = await getDailyResults();
     return NextResponse.json({ success: true, results });
   } catch (error: any) {
-    console.error("Error fetching results:", error);
+    console.error(error);
     return NextResponse.json(
-      { success: false, error: error.message || "Failed to fetch results" },
+      { success: false, error: "Failed to fetch daily results" },
       { status: 500 }
     );
   }
@@ -17,18 +17,10 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const { winner } = await request.json();
-
-    if (!winner || typeof winner !== "string") {
-      return NextResponse.json(
-        { success: false, error: "Invalid winner" },
-        { status: 400 }
-      );
-    }
-
-    const result = await submitResult(winner.trim());
-    return NextResponse.json({ success: true, result });
+    const resultDoc = await submitResult(winner);
+    return NextResponse.json({ success: true, result: resultDoc });
   } catch (error: any) {
-    console.error("Error submitting result:", error);
+    console.error(error);
     return NextResponse.json(
       { success: false, error: error.message || "Failed to submit result" },
       { status: 500 }

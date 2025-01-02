@@ -5,13 +5,10 @@ export async function GET() {
   try {
     const bracketItems = await getDailyBracket();
     return NextResponse.json({ success: true, items: bracketItems });
-  } catch (error: any) {
-    console.error("Error fetching daily bracket:", error);
+  } catch (error: unknown) {
+    console.error(error);
     return NextResponse.json(
-      {
-        success: false,
-        error: error.message || "Failed to fetch daily bracket",
-      },
+      { success: false, error: "Failed to fetch daily bracket" },
       { status: 500 }
     );
   }
@@ -21,17 +18,10 @@ export async function POST(request: Request) {
   try {
     const { items } = await request.json();
 
-    if (!Array.isArray(items) || items.length !== 16) {
-      return NextResponse.json(
-        { success: false, error: "You must provide exactly 16 items" },
-        { status: 400 }
-      );
-    }
-
-    const result = await setDailyBracket(items);
-    return NextResponse.json({ success: true, items: result });
+    const updated = await setDailyBracket(items);
+    return NextResponse.json({ success: true, items: updated });
   } catch (error: any) {
-    console.error("Error setting daily bracket:", error);
+    console.error(error);
     return NextResponse.json(
       { success: false, error: error.message || "Failed to set daily bracket" },
       { status: 500 }

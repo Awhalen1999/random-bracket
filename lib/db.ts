@@ -17,18 +17,18 @@ if (process.env.NODE_ENV === "development") {
     (global as any)._mongoClient = client.connect();
   }
   client = new MongoClient(uri);
-  db = (await (global as any)._mongoClient).db("random_bracket_db"); // Replace with your DB name
+  db = (await (global as any)._mongoClient).db("random_bracket_db");
 } else {
   // In production, create a new client for each connection
   client = new MongoClient(uri);
-  db = client.db("random_bracket_db"); // Replace with your DB name
+  db = client.db("random_bracket_db");
 }
 
 export async function getDb(): Promise<Db> {
   if (!db) {
     client = new MongoClient(uri);
     await client.connect();
-    db = client.db("random_bracket_db"); // Replace with your DB name
+    db = client.db("random_bracket_db");
   }
   return db;
 }

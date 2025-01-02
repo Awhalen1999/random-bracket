@@ -1,45 +1,59 @@
 import { getDb } from "./db";
 
 /**
- * Retrieves today's bracket. If it doesn't exist, selects 16 random items and stores them.
+ * Gets or creates today's bracket of 16 random items.
  */
 export async function getDailyBracket(): Promise<string[]> {
   const db = await getDb();
   const today = new Date().toISOString().split("T")[0];
 
-  let doc = await db.collection("daily_round").findOne({ date: today });
-
-  if (!doc) {
-    // Select 16 random active items
-    const randomItems = await db
+  let dailyDoc = await db.collection("daily_round").findOne({ date: today });
+  if (!dailyDoc) {
+    // Randomly select 16 active items
+    const items = await db
       .collection("items")
-      .aggregate([{ $sample: { size: 16 } }])
+      .aggregate([
+        { $match: { active: { $ne: false } } }, // Only items that are not false
+        { $sample: { size: 16 } },
+      ])
       .toArray();
-    const itemNames = randomItems.map((item: any) => item.name);
 
-    // Store the daily round
+    const itemNames = items.map((item: any) => item.name);
+
+    // Insert a new daily round doc
     await db.collection("daily_round").insertOne({
       date: today,
       items: itemNames,
+      createdAt: new Date(),
     });
 
     return itemNames;
   }
 
-  return doc.items;
+  return dailyDoc.items;
 }
 
 /**
- * Manually sets today's bracket with provided items.
- * @param items - Array of 16 item names.
+ * Manually sets today's bracket (admin override).
  */
 export async function setDailyBracket(items: string[]): Promise<string[]> {
+  if (items.length !== 16) {
+    throw new Error("You must provide exactly 16 items.");
+  }
+
   const db = await getDb();
   const today = new Date().toISOString().split("T")[0];
 
-  await db
-    .collection("daily_round")
-    .updateOne({ date: today }, { $set: { items } }, { upsert: true });
+  await db.collection("daily_round").updateOne(
+    { date: today },
+    {
+      $set: {
+        items,
+        updatedAt: new Date(),
+      },
+    },
+    { upsert: true }
+  );
 
   return items;
 }
