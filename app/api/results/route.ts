@@ -1,10 +1,19 @@
 import { NextResponse } from "next/server";
-import { submitResult, getDailyResults } from "@/lib/results";
+import { submitResult, getDailyResults, getDailyStats } from "@/lib/results";
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const results = await getDailyResults();
-    return NextResponse.json({ success: true, results });
+    // Check if ?stats=true
+    const { searchParams } = new URL(request.url);
+    const showStats = searchParams.get("stats");
+
+    if (showStats === "true") {
+      const stats = await getDailyStats();
+      return NextResponse.json({ success: true, stats });
+    } else {
+      const results = await getDailyResults();
+      return NextResponse.json({ success: true, results });
+    }
   } catch (error: any) {
     console.error(error);
     return NextResponse.json(
