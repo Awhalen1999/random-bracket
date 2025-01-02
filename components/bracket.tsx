@@ -7,6 +7,7 @@ import Column from "./column";
 interface BracketProps {
   entries: string[];
   colorMap: { [key: string]: string }; // New prop for color mapping
+  onWinnerSelected: (winner: string) => void;
 }
 
 export default function Bracket({ entries, colorMap }: BracketProps) {
