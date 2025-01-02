@@ -160,13 +160,6 @@ export default function Page() {
         </Text>
       </VStack>
 
-      {/* Champion Display */}
-      {finalWinner && (
-        <Box mb={6}>
-          <Heading size="md">Champion: {finalWinner}</Heading>
-        </Box>
-      )}
-
       {/* The bracket itself */}
       <Bracket
         entries={entries}
