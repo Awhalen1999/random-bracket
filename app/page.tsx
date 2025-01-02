@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Box, Text, Spinner, VStack, Heading, Link } from "@chakra-ui/react";
 import Bracket from "@/components/bracket";
+import Countdown from "@/components/countdown";
 import NextLink from "next/link";
 
 export default function Page() {
@@ -152,12 +153,13 @@ export default function Page() {
     >
       <VStack align="center" mb={6}>
         <Heading size="lg" textAlign="center">
-          Daily Bracket Challenge
+          Daily Random Things Bracket
         </Heading>
-        <Text textAlign="center" fontSize="md" color="gray.600">
-          Every 24 hours, we generate 16 random things. Pick your ultimate
-          champion!
+        <Text textAlign="center" fontSize="md" color="gray.400">
+          Every 24 hours, we generate 16 random things. Pick your winner march
+          madness style!
         </Text>
+        <Countdown />
       </VStack>
 
       {/* The bracket itself */}
@@ -170,7 +172,7 @@ export default function Page() {
       {/* Voted Message */}
       {alreadyVoted && finalWinner && (
         <Box mt={8} textAlign="center">
-          <Text fontSize="sm" color="gray.600">
+          <Text fontSize="sm" color="gray.500">
             Already chose a winner for today: <strong>{finalWinner}</strong>.{" "}
             <NextLink href="/stats" passHref>
               <Link color="blue.500">Check out today's stats</Link>
