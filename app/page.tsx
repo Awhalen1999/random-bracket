@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { Box, Text, Spinner, VStack, Heading, Link } from "@chakra-ui/react";
 import Bracket from "@/components/bracket";
 import Countdown from "@/components/countdown";
-import NextLink from "next/link";
 
 export default function Page() {
   const [entries, setEntries] = useState<string[]>([]);
@@ -78,6 +77,7 @@ export default function Page() {
 
       // Mark localStorage so the user can't vote again
       const today = new Date().toISOString().split("T")[0];
+      localStorage.clear();
       localStorage.setItem(`bracketVoted-${today}`, "true");
       localStorage.setItem(`bracketWinner-${today}`, winner);
 
@@ -87,14 +87,11 @@ export default function Page() {
       console.log(`[Frontend] Successfully voted for: ${winner}`);
     } catch (err) {
       console.error(`[Frontend] Error submitting winner:`, err);
-      // Optional: Display a non-intrusive error message
-      // You can set an error state and conditionally render an error message below
     }
   };
 
-  /**
-   * UI rendering
-   */
+  //  UI rendering
+
   if (loading) {
     return (
       <Box textAlign="center" mt={20}>
@@ -142,7 +139,7 @@ export default function Page() {
 
   return (
     <Box
-      maxW="97vw"
+      maxW="100vw"
       mx="auto"
       p={4}
       overflowX="auto"
@@ -174,9 +171,9 @@ export default function Page() {
         <Box mt={8} textAlign="center">
           <Text fontSize="sm" color="gray.500">
             Already chose a winner for today: <strong>{finalWinner}</strong>.{" "}
-            <NextLink href="/stats" passHref>
-              <Link color="blue.500">Check out today's stats</Link>
-            </NextLink>
+            <Link href="/stats" color="yellow.500">
+              Check out today's stats
+            </Link>
           </Text>
         </Box>
       )}

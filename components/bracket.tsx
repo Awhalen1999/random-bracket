@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Flex, Box, Heading } from "@chakra-ui/react";
+import { Flex, Box, Heading, Text } from "@chakra-ui/react";
 import Column from "./column";
 
 interface BracketProps {
@@ -127,109 +127,123 @@ export default function Bracket({
 
   return (
     <Flex
-      display="grid"
-      gridTemplateColumns="repeat(7, minmax(120px, 1fr))"
-      alignItems="center"
-      justifyContent="center"
-      gap={4}
+      width="100%" // Occupies the full width of the parent
+      overflowX="auto" // Enables horizontal scrolling if needed
     >
-      {/* Left Side */}
-      <Column
-        title="Round of 16"
-        entries={leftR16}
-        pairs={4}
-        onWinner={(matchIndex, winner) => {
-          console.log(
-            `[Bracket] Round of 16 winner: "${winner}" at matchIndex: ${matchIndex}`
-          );
-          propagateWinner(winner, matchIndex, setLeftQFState, 1);
-        }}
-        colorMap={colorMap}
-      />
-      <Column
-        title="Quarterfinals"
-        entries={leftQFState}
-        pairs={2}
-        onWinner={(matchIndex, winner) => {
-          console.log(
-            `[Bracket] Quarterfinals winner: "${winner}" at matchIndex: ${matchIndex}`
-          );
-          propagateToSF(winner, matchIndex, true);
-        }}
-        colorMap={colorMap}
-      />
-      <Column
-        title="Semifinals"
-        entries={leftSFState}
-        pairs={1}
-        onWinner={(matchIndex, winner) => {
-          console.log(
-            `[Bracket] Semifinals winner: "${winner}" at matchIndex: ${matchIndex}`
-          );
-          propagateToFinalFromSF(winner, matchIndex, true);
-        }}
-        colorMap={colorMap}
-      />
+      <Box
+        display="grid"
+        w="100%" // Occupies the full width of the parent
+        justifyContent="center"
+        alignItems="center"
+        gridTemplateColumns="repeat(7, 150px)"
+        columnGap={6}
+      >
+        {/* Left Side */}
+        <Column
+          title="Round of 16"
+          entries={leftR16}
+          pairs={4}
+          onWinner={(matchIndex, winner) => {
+            console.log(
+              `[Bracket] Round of 16 winner: "${winner}" at matchIndex: ${matchIndex}`
+            );
+            propagateWinner(winner, matchIndex, setLeftQFState, 1);
+          }}
+          colorMap={colorMap}
+        />
+        <Column
+          title="Quarterfinals"
+          entries={leftQFState}
+          pairs={2}
+          onWinner={(matchIndex, winner) => {
+            console.log(
+              `[Bracket] Quarterfinals winner: "${winner}" at matchIndex: ${matchIndex}`
+            );
+            propagateToSF(winner, matchIndex, true);
+          }}
+          colorMap={colorMap}
+        />
+        <Column
+          title="Semifinals"
+          entries={leftSFState}
+          pairs={1}
+          onWinner={(matchIndex, winner) => {
+            console.log(
+              `[Bracket] Semifinals winner: "${winner}" at matchIndex: ${matchIndex}`
+            );
+            propagateToFinalFromSF(winner, matchIndex, true);
+          }}
+          colorMap={colorMap}
+        />
 
-      {/* Final */}
-      <Column
-        title="Final"
-        entries={finalState}
-        pairs={1}
-        onWinner={(matchIndex, winner) => {
-          console.log(
-            `[Bracket] Final winner: "${winner}" at matchIndex: ${matchIndex}`
-          );
-          propagateChampion(winner);
-        }}
-        colorMap={colorMap}
-      />
+        {/* Final */}
+        <Column
+          title="Final"
+          entries={finalState}
+          pairs={1}
+          onWinner={(matchIndex, winner) => {
+            console.log(
+              `[Bracket] Final winner: "${winner}" at matchIndex: ${matchIndex}`
+            );
+            propagateChampion(winner);
+          }}
+          colorMap={colorMap}
+        />
 
-      {/* Right Side */}
-      <Column
-        title="Semifinals"
-        entries={rightSFState}
-        pairs={1}
-        onWinner={(matchIndex, winner) => {
-          console.log(
-            `[Bracket] Semifinals winner: "${winner}" at matchIndex: ${matchIndex}`
-          );
-          propagateToFinalFromSF(winner, matchIndex, false);
-        }}
-        colorMap={colorMap}
-      />
-      <Column
-        title="Quarterfinals"
-        entries={rightQFState}
-        pairs={2}
-        onWinner={(matchIndex, winner) => {
-          console.log(
-            `[Bracket] Quarterfinals winner: "${winner}" at matchIndex: ${matchIndex}`
-          );
-          propagateToSF(winner, matchIndex, false);
-        }}
-        colorMap={colorMap}
-      />
-      <Column
-        title="Round of 16"
-        entries={rightR16}
-        pairs={4}
-        onWinner={(matchIndex, winner) => {
-          console.log(
-            `[Bracket] Round of 16 winner: "${winner}" at matchIndex: ${matchIndex}`
-          );
-          propagateWinner(winner, matchIndex, setRightQFState, 1);
-        }}
-        colorMap={colorMap}
-      />
+        {/* Right Side */}
+        <Column
+          title="Semifinals"
+          entries={rightSFState}
+          pairs={1}
+          onWinner={(matchIndex, winner) => {
+            console.log(
+              `[Bracket] Semifinals winner: "${winner}" at matchIndex: ${matchIndex}`
+            );
+            propagateToFinalFromSF(winner, matchIndex, false);
+          }}
+          colorMap={colorMap}
+        />
+        <Column
+          title="Quarterfinals"
+          entries={rightQFState}
+          pairs={2}
+          onWinner={(matchIndex, winner) => {
+            console.log(
+              `[Bracket] Quarterfinals winner: "${winner}" at matchIndex: ${matchIndex}`
+            );
+            propagateToSF(winner, matchIndex, false);
+          }}
+          colorMap={colorMap}
+        />
+        <Column
+          title="Round of 16"
+          entries={rightR16}
+          pairs={4}
+          onWinner={(matchIndex, winner) => {
+            console.log(
+              `[Bracket] Round of 16 winner: "${winner}" at matchIndex: ${matchIndex}`
+            );
+            propagateWinner(winner, matchIndex, setRightQFState, 1);
+          }}
+          colorMap={colorMap}
+        />
 
-      {champion && (
-        <Box gridColumn="1 / -1" textAlign="center" mt={10}>
-          <Heading as="h2" size="xl" color="green.500">
-            Champion: {champion}
-          </Heading>
-        </Box>
-      )}
+        {champion && (
+          <Box gridColumn="1 / -1" textAlign="center" mt={2}>
+            <Heading as="h2" size="lg">
+              Champion:{" "}
+              <Text
+                as="span"
+                color="yellow.500"
+                fontWeight="bold"
+                fontSize="xl"
+              >
+                {champion}
+              </Text>
+            </Heading>
+          </Box>
+        )}
+      </Box>
     </Flex>
   );
 }

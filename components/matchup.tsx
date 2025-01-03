@@ -28,7 +28,7 @@ export default function Matchup({
     if (contender === "") {
       return (
         <Box
-          width="150px"
+          width="135px"
           minH="40px"
           whiteSpace="normal"
           wordBreak="break-word"
@@ -58,7 +58,7 @@ export default function Matchup({
             );
           }
         }}
-        width="150px"
+        width="135px"
         whiteSpace="normal"
         wordBreak="break-word"
         overflowWrap="break-word"
@@ -70,11 +70,6 @@ export default function Matchup({
         cursor={isDisabled ? "not-allowed" : "pointer"}
         opacity={isDisabled ? 0.7 : 1}
         backgroundColor={bgColor}
-        _hover={
-          !isDisabled
-            ? { backgroundColor: isSelected ? "blue.200" : bgColor }
-            : {}
-        }
       >
         {contender}
       </Box>
@@ -85,12 +80,12 @@ export default function Matchup({
     <Box
       borderWidth="1px"
       borderRadius="md"
-      p={4}
+      py={2}
       textAlign="center"
       display="flex"
       flexDirection="column"
       alignItems="center"
-      width="max-content"
+      width="150px"
     >
       <Stack align="center">
         {renderContender(c1)}

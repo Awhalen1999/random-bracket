@@ -17,7 +17,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <Provider>
           <Box minHeight="100vh" display="flex" flexDirection="column">
             <Navbar />
-            <Box flex="1">{children}</Box>
+            <Box>{children}</Box>
             <Footer />
           </Box>
         </Provider>

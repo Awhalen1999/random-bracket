@@ -14,7 +14,7 @@ export default function Footer() {
         />
       </HStack>
       <HStack>
-        <Link href="https://github.com/Awhalen1999" isExternal>
+        <Link href="https://github.com/Awhalen1999">
           <FaGithub />
         </Link>
       </HStack>

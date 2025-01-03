@@ -36,6 +36,7 @@ export default function StatsPage() {
     return <p>No stats available for today yet.</p>;
   }
 
+  // TODO: add back button to top left corner of actual component box
   return (
     <>
       <h2>Today's Bracket Stats</h2>
