@@ -20,10 +20,10 @@ const TeamBox = ({
   showUndo?: boolean;
 }) => (
   <div
-    className={`relative h-14 w-32 rounded-lg border-2 border-gray-300 ${
+    className={`relative h-14 w-32 rounded-lg  ${
       team ? team.color : "bg-gray-100"
     } ${
-      onClick ? "cursor-pointer hover:border-gray-500" : ""
+      onClick ? "cursor-pointer" : ""
     } transition-all flex items-center justify-center text-white font-semibold text-sm`}
     onClick={onClick}
   >
@@ -41,8 +41,6 @@ const TeamBox = ({
     )}
   </div>
 );
-
-// todo: center boxes correctly for rounds 2, 3, and 4
 
 export default function Home() {
   const initialTeams: Team[] = [
@@ -136,19 +134,10 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-900 p-4 overflow-x-auto">
-      <h1 className="text-4xl font-bold text-center mb-8 text-white">
-        Random Bracket
-      </h1>
-
-      <div className="flex justify-center items-center gap-8 min-w-max">
-        {/* LEFT SIDE */}
-
+    <div className="min-h-screen bg-zinc-900 overflow-x-auto">
+      <div className="flex justify-center items-center gap-4">
         {/* Round 1 Left - 8 teams, 4 matchups */}
-        <div className="flex flex-col justify-around h-[800px]">
-          <div className="text-xs font-semibold text-center mb-2 text-zinc-400">
-            Round 1
-          </div>
+        <div className="relative flex flex-col justify-around h-[600px]">
           {[0, 1, 2, 3].map((matchup) => (
             <div key={matchup} className="flex flex-col gap-2">
               <TeamBox
@@ -166,10 +155,7 @@ export default function Home() {
         </div>
 
         {/* Round 2 Left - 4 teams */}
-        <div className="flex flex-col justify-around h-[800px]">
-          <div className="text-xs font-semibold text-center mb-2 text-zinc-400">
-            Round 2
-          </div>
+        <div className="relative flex flex-col justify-around h-[600px]">
           {[0, 1].map((matchup) => (
             <div key={matchup} className="flex flex-col gap-2">
               <TeamBox
@@ -195,10 +181,7 @@ export default function Home() {
         </div>
 
         {/* Round 3 Left - 2 teams */}
-        <div className="flex flex-col justify-around h-[800px]">
-          <div className="text-xs font-semibold text-center mb-2 text-zinc-400">
-            Round 3
-          </div>
+        <div className="relative flex flex-col justify-around h-[600px]">
           <div className="flex flex-col gap-2">
             <TeamBox
               team={round3[0]}
@@ -216,10 +199,7 @@ export default function Home() {
         </div>
 
         {/* Finals Left - 1 team */}
-        <div className="flex flex-col justify-center h-[800px]">
-          <div className="text-xs font-semibold text-center mb-2 text-zinc-400">
-            Finals
-          </div>
+        <div className="relative flex flex-col justify-center h-[600px]">
           <TeamBox
             team={round4[0]}
             onClick={() => round4[0] && handleTeamClick(round4[0], 4, 0)}
@@ -229,10 +209,7 @@ export default function Home() {
         </div>
 
         {/* Champion - center */}
-        <div className="flex flex-col justify-center h-[800px]">
-          <div className="text-xs font-semibold text-center mb-2 text-zinc-400">
-            Champion
-          </div>
+        <div className="relative flex flex-col justify-center h-[600px]">
           <TeamBox
             team={champion}
             onUndo={() => handleUndo(5, 0)}
@@ -241,10 +218,7 @@ export default function Home() {
         </div>
 
         {/* Finals Right - 1 team */}
-        <div className="flex flex-col justify-center h-[800px]">
-          <div className="text-xs font-semibold text-center mb-2 text-zinc-400">
-            Finals
-          </div>
+        <div className="relative flex flex-col justify-center h-[600px]">
           <TeamBox
             team={round4[1]}
             onClick={() => round4[1] && handleTeamClick(round4[1], 4, 0)}
@@ -256,10 +230,7 @@ export default function Home() {
         {/* RIGHT SIDE */}
 
         {/* Round 3 Right - 2 teams */}
-        <div className="flex flex-col justify-around h-[800px]">
-          <div className="text-xs font-semibold text-center mb-2 text-zinc-400">
-            Round 3
-          </div>
+        <div className="relative flex flex-col justify-around h-[600px]">
           <div className="flex flex-col gap-2">
             <TeamBox
               team={round3[2]}
@@ -277,10 +248,7 @@ export default function Home() {
         </div>
 
         {/* Round 2 Right - 4 teams */}
-        <div className="flex flex-col justify-around h-[800px]">
-          <div className="text-xs font-semibold text-center mb-2 text-zinc-400">
-            Round 2
-          </div>
+        <div className="relative flex flex-col justify-around h-[600px]">
           {[2, 3].map((matchup) => (
             <div key={matchup} className="flex flex-col gap-2">
               <TeamBox
@@ -306,10 +274,7 @@ export default function Home() {
         </div>
 
         {/* Round 1 Right - 8 teams, 4 matchups */}
-        <div className="flex flex-col justify-around h-[800px]">
-          <div className="text-xs font-semibold text-center mb-2 text-zinc-400">
-            Round 1
-          </div>
+        <div className="relative flex flex-col justify-around h-[600px]">
           {[4, 5, 6, 7].map((matchup) => (
             <div key={matchup} className="flex flex-col gap-2">
               <TeamBox
