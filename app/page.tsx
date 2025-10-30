@@ -3,6 +3,12 @@
 import { useState } from "react";
 import { useTodaysBracket, useSubmitBracket } from "@/hooks/useBracket";
 import { useRouter } from "next/navigation";
+import {
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 
 type Item = {
   id: string;
@@ -20,35 +26,50 @@ const ItemBox = ({
   onClick?: () => void;
   onUndo?: () => void;
   showUndo?: boolean;
-}) => (
-  <div
-    className={`relative h-14 w-32 rounded-lg ${
-      item ? item.color : "bg-gray-100"
-    } ${
-      onClick ? "cursor-pointer" : ""
-    } transition-all flex items-center justify-center text-white font-semibold text-sm p-2`}
-    onClick={onClick}
-  >
-    {item ? (
-      <span className="line-clamp-2 text-center text-xs leading-tight">
-        {item.name}
-      </span>
-    ) : (
-      ""
-    )}
-    {showUndo && item && onUndo && (
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          onUndo();
-        }}
-        className="absolute top-1 right-1 w-5 h-5 bg-white text-black rounded-full flex items-center justify-center text-xs font-bold hover:bg-gray-200"
-      >
-        ×
-      </button>
-    )}
-  </div>
-);
+}) => {
+  const content = (
+    <div
+      className={`relative h-14 w-32 rounded-lg ${
+        item ? item.color : "bg-gray-100"
+      } ${
+        onClick ? "cursor-pointer" : ""
+      } transition-all flex items-center justify-center text-white font-semibold text-sm p-2`}
+      onClick={onClick}
+    >
+      {item ? (
+        <span className="line-clamp-2 text-center text-xs leading-tight">
+          {item.name}
+        </span>
+      ) : (
+        ""
+      )}
+      {showUndo && item && onUndo && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onUndo();
+          }}
+          className="absolute top-1 right-1 w-5 h-5 bg-white text-black rounded-full flex items-center justify-center text-xs font-bold hover:bg-gray-200"
+        >
+          ×
+        </button>
+      )}
+    </div>
+  );
+
+  if (!item) {
+    return content;
+  }
+
+  return (
+    <TooltipPrimitive.Root delayDuration={1000}>
+      <TooltipTrigger asChild>{content}</TooltipTrigger>
+      <TooltipContent side="top" sideOffset={8}>
+        <p>{item.name}</p>
+      </TooltipContent>
+    </TooltipPrimitive.Root>
+  );
+};
 
 export default function Home() {
   const router = useRouter();
@@ -190,9 +211,10 @@ export default function Home() {
   };
 
   return (
-    <div className="w-full overflow-x-auto p-4">
-      <div className="flex flex-col items-center gap-8">
-        <div className="flex items-center gap-4 min-w-max mx-auto w-fit">
+    <TooltipProvider>
+      <div className="w-full overflow-x-auto p-4">
+        <div className="flex flex-col items-center gap-8">
+          <div className="flex items-center gap-4 min-w-max mx-auto w-fit">
         {/* Round 1 Left - 8 teams, 4 matchups */}
         <div className="relative flex flex-col justify-around h-[600px]">
           {[0, 1, 2, 3].map((matchup) => (
@@ -358,7 +380,8 @@ export default function Home() {
             {submitMutation.isPending ? "Submitting..." : "Submit Bracket"}
           </button>
         )}
+        </div>
       </div>
-    </div>
+    </TooltipProvider>
   );
 }
