@@ -4,33 +4,39 @@ import { useState } from "react";
 import { useTodaysBracket, useSubmitBracket } from "@/hooks/useBracket";
 import { useRouter } from "next/navigation";
 
-type Team = {
+type Item = {
   id: string;
   color: string;
   name: string;
 };
 
-const TeamBox = ({
-  team,
+const ItemBox = ({
+  item,
   onClick,
   onUndo,
   showUndo = false,
 }: {
-  team: Team | null;
+  item: Item | null;
   onClick?: () => void;
   onUndo?: () => void;
   showUndo?: boolean;
 }) => (
   <div
-    className={`relative h-14 w-32 rounded-lg  ${
-      team ? team.color : "bg-gray-100"
+    className={`relative h-14 w-32 rounded-lg ${
+      item ? item.color : "bg-gray-100"
     } ${
       onClick ? "cursor-pointer" : ""
-    } transition-all flex items-center justify-center text-white font-semibold text-sm`}
+    } transition-all flex items-center justify-center text-white font-semibold text-sm p-2`}
     onClick={onClick}
   >
-    {team ? team.name : ""}
-    {showUndo && team && onUndo && (
+    {item ? (
+      <span className="line-clamp-2 text-center text-xs leading-tight">
+        {item.name}
+      </span>
+    ) : (
+      ""
+    )}
+    {showUndo && item && onUndo && (
       <button
         onClick={(e) => {
           e.stopPropagation();
@@ -49,7 +55,7 @@ export default function Home() {
   const { data: bracketData, isLoading, error } = useTodaysBracket();
   const submitMutation = useSubmitBracket();
 
-  // Color palette for teams
+  // Color palette for items
   const colors = [
     "bg-red-500",
     "bg-blue-500",
@@ -70,17 +76,17 @@ export default function Home() {
   ];
 
   // Transform API data to include colors
-  const round1: Team[] =
+  const round1: Item[] =
     bracketData?.items.map((item, index) => ({
       id: item.id,
       name: item.name,
       color: colors[index % colors.length],
     })) || [];
 
-  const [round2, setRound2] = useState<(Team | null)[]>(Array(8).fill(null));
-  const [round3, setRound3] = useState<(Team | null)[]>(Array(4).fill(null));
-  const [round4, setRound4] = useState<(Team | null)[]>(Array(2).fill(null));
-  const [champion, setChampion] = useState<Team | null>(null);
+  const [round2, setRound2] = useState<(Item | null)[]>(Array(8).fill(null));
+  const [round3, setRound3] = useState<(Item | null)[]>(Array(4).fill(null));
+  const [round4, setRound4] = useState<(Item | null)[]>(Array(2).fill(null));
+  const [champion, setChampion] = useState<Item | null>(null);
 
   const handleSubmit = () => {
     if (!champion) return;
@@ -118,24 +124,24 @@ export default function Home() {
     return <div className="p-8 text-white">No bracket available today</div>;
   }
 
-  const handleTeamClick = (team: Team, round: number, matchupIndex: number) => {
+  const handleItemClick = (item: Item, round: number, matchupIndex: number) => {
     if (round === 1) {
       const newRound2 = [...round2];
-      newRound2[matchupIndex] = team;
+      newRound2[matchupIndex] = item;
       setRound2(newRound2);
     } else if (round === 2) {
-      if (!round2.every((t) => t !== null)) return;
+      if (!round2.every((i) => i !== null)) return;
       const newRound3 = [...round3];
-      newRound3[matchupIndex] = team;
+      newRound3[matchupIndex] = item;
       setRound3(newRound3);
     } else if (round === 3) {
-      if (!round3.every((t) => t !== null)) return;
+      if (!round3.every((i) => i !== null)) return;
       const newRound4 = [...round4];
-      newRound4[matchupIndex] = team;
+      newRound4[matchupIndex] = item;
       setRound4(newRound4);
     } else if (round === 4) {
-      if (!round4.every((t) => t !== null)) return;
-      setChampion(team);
+      if (!round4.every((i) => i !== null)) return;
+      setChampion(item);
     }
   };
 
@@ -191,14 +197,14 @@ export default function Home() {
         <div className="relative flex flex-col justify-around h-[600px]">
           {[0, 1, 2, 3].map((matchup) => (
             <div key={matchup} className="flex flex-col gap-2">
-              <TeamBox
-                team={round1[matchup * 2]}
-                onClick={() => handleTeamClick(round1[matchup * 2], 1, matchup)}
+              <ItemBox
+                item={round1[matchup * 2]}
+                onClick={() => handleItemClick(round1[matchup * 2], 1, matchup)}
               />
-              <TeamBox
-                team={round1[matchup * 2 + 1]}
+              <ItemBox
+                item={round1[matchup * 2 + 1]}
                 onClick={() =>
-                  handleTeamClick(round1[matchup * 2 + 1], 1, matchup)
+                  handleItemClick(round1[matchup * 2 + 1], 1, matchup)
                 }
               />
             </div>
@@ -209,20 +215,20 @@ export default function Home() {
         <div className="relative flex flex-col justify-around h-[600px]">
           {[0, 1].map((matchup) => (
             <div key={matchup} className="flex flex-col gap-2">
-              <TeamBox
-                team={round2[matchup * 2]}
+              <ItemBox
+                item={round2[matchup * 2]}
                 onClick={() =>
                   round2[matchup * 2] &&
-                  handleTeamClick(round2[matchup * 2]!, 2, matchup)
+                  handleItemClick(round2[matchup * 2]!, 2, matchup)
                 }
                 onUndo={() => handleUndo(2, matchup * 2)}
                 showUndo={true}
               />
-              <TeamBox
-                team={round2[matchup * 2 + 1]}
+              <ItemBox
+                item={round2[matchup * 2 + 1]}
                 onClick={() =>
                   round2[matchup * 2 + 1] &&
-                  handleTeamClick(round2[matchup * 2 + 1]!, 2, matchup)
+                  handleItemClick(round2[matchup * 2 + 1]!, 2, matchup)
                 }
                 onUndo={() => handleUndo(2, matchup * 2 + 1)}
                 showUndo={true}
@@ -234,15 +240,15 @@ export default function Home() {
         {/* Round 3 Left - 2 teams */}
         <div className="relative flex flex-col justify-around h-[600px]">
           <div className="flex flex-col gap-2">
-            <TeamBox
-              team={round3[0]}
-              onClick={() => round3[0] && handleTeamClick(round3[0], 3, 0)}
+            <ItemBox
+              item={round3[0]}
+              onClick={() => round3[0] && handleItemClick(round3[0], 3, 0)}
               onUndo={() => handleUndo(3, 0)}
               showUndo={true}
             />
-            <TeamBox
-              team={round3[1]}
-              onClick={() => round3[1] && handleTeamClick(round3[1], 3, 0)}
+            <ItemBox
+              item={round3[1]}
+              onClick={() => round3[1] && handleItemClick(round3[1], 3, 0)}
               onUndo={() => handleUndo(3, 1)}
               showUndo={true}
             />
@@ -251,9 +257,9 @@ export default function Home() {
 
         {/* Finals Left - 1 team */}
         <div className="relative flex flex-col justify-center h-[600px]">
-          <TeamBox
-            team={round4[0]}
-            onClick={() => round4[0] && handleTeamClick(round4[0], 4, 0)}
+          <ItemBox
+            item={round4[0]}
+            onClick={() => round4[0] && handleItemClick(round4[0], 4, 0)}
             onUndo={() => handleUndo(4, 0)}
             showUndo={true}
           />
@@ -261,8 +267,8 @@ export default function Home() {
 
         {/* Champion - center */}
         <div className="relative flex flex-col justify-center h-[600px]">
-          <TeamBox
-            team={champion}
+          <ItemBox
+            item={champion}
             onUndo={() => handleUndo(5, 0)}
             showUndo={true}
           />
@@ -270,9 +276,9 @@ export default function Home() {
 
         {/* Finals Right - 1 team */}
         <div className="relative flex flex-col justify-center h-[600px]">
-          <TeamBox
-            team={round4[1]}
-            onClick={() => round4[1] && handleTeamClick(round4[1], 4, 0)}
+          <ItemBox
+            item={round4[1]}
+            onClick={() => round4[1] && handleItemClick(round4[1], 4, 0)}
             onUndo={() => handleUndo(4, 1)}
             showUndo={true}
           />
@@ -283,15 +289,15 @@ export default function Home() {
         {/* Round 3 Right - 2 teams */}
         <div className="relative flex flex-col justify-around h-[600px]">
           <div className="flex flex-col gap-2">
-            <TeamBox
-              team={round3[2]}
-              onClick={() => round3[2] && handleTeamClick(round3[2], 3, 1)}
+            <ItemBox
+              item={round3[2]}
+              onClick={() => round3[2] && handleItemClick(round3[2], 3, 1)}
               onUndo={() => handleUndo(3, 2)}
               showUndo={true}
             />
-            <TeamBox
-              team={round3[3]}
-              onClick={() => round3[3] && handleTeamClick(round3[3], 3, 1)}
+            <ItemBox
+              item={round3[3]}
+              onClick={() => round3[3] && handleItemClick(round3[3], 3, 1)}
               onUndo={() => handleUndo(3, 3)}
               showUndo={true}
             />
@@ -302,20 +308,20 @@ export default function Home() {
         <div className="relative flex flex-col justify-around h-[600px]">
           {[2, 3].map((matchup) => (
             <div key={matchup} className="flex flex-col gap-2">
-              <TeamBox
-                team={round2[matchup * 2]}
+              <ItemBox
+                item={round2[matchup * 2]}
                 onClick={() =>
                   round2[matchup * 2] &&
-                  handleTeamClick(round2[matchup * 2]!, 2, matchup)
+                  handleItemClick(round2[matchup * 2]!, 2, matchup)
                 }
                 onUndo={() => handleUndo(2, matchup * 2)}
                 showUndo={true}
               />
-              <TeamBox
-                team={round2[matchup * 2 + 1]}
+              <ItemBox
+                item={round2[matchup * 2 + 1]}
                 onClick={() =>
                   round2[matchup * 2 + 1] &&
-                  handleTeamClick(round2[matchup * 2 + 1]!, 2, matchup)
+                  handleItemClick(round2[matchup * 2 + 1]!, 2, matchup)
                 }
                 onUndo={() => handleUndo(2, matchup * 2 + 1)}
                 showUndo={true}
@@ -328,14 +334,14 @@ export default function Home() {
         <div className="relative flex flex-col justify-around h-[600px]">
           {[4, 5, 6, 7].map((matchup) => (
             <div key={matchup} className="flex flex-col gap-2">
-              <TeamBox
-                team={round1[matchup * 2]}
-                onClick={() => handleTeamClick(round1[matchup * 2], 1, matchup)}
+              <ItemBox
+                item={round1[matchup * 2]}
+                onClick={() => handleItemClick(round1[matchup * 2], 1, matchup)}
               />
-              <TeamBox
-                team={round1[matchup * 2 + 1]}
+              <ItemBox
+                item={round1[matchup * 2 + 1]}
                 onClick={() =>
-                  handleTeamClick(round1[matchup * 2 + 1], 1, matchup)
+                  handleItemClick(round1[matchup * 2 + 1], 1, matchup)
                 }
               />
             </div>
