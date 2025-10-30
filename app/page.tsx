@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useTodaysBracket, useSubmitBracket } from "@/hooks/useBracket";
 import { useRouter } from "next/navigation";
 
@@ -82,26 +82,25 @@ export default function Home() {
   const [round4, setRound4] = useState<(Team | null)[]>(Array(2).fill(null));
   const [champion, setChampion] = useState<Team | null>(null);
 
-  // Submit champion when selected
-  useEffect(() => {
-    if (champion) {
-      submitMutation.mutate(
-        { winnerId: champion.id },
-        {
-          onSuccess: () => {
+  const handleSubmit = () => {
+    if (!champion) return;
+
+    submitMutation.mutate(
+      { winnerId: champion.id },
+      {
+        onSuccess: () => {
+          router.push("/results");
+        },
+        onError: (error) => {
+          console.error("Failed to submit bracket:", error);
+          // Still redirect to results if already voted (429)
+          if (error.message.includes("already submitted")) {
             router.push("/results");
-          },
-          onError: (error) => {
-            console.error("Failed to submit bracket:", error);
-            // Still redirect to results if already voted (429)
-            if (error.message.includes("already submitted")) {
-              router.push("/results");
-            }
-          },
-        }
-      );
-    }
-  }, [champion, submitMutation, router]);
+          }
+        },
+      }
+    );
+  };
 
   if (isLoading) {
     return <div className="p-8 text-white">Loading today&apos;s bracket...</div>;
@@ -186,7 +185,8 @@ export default function Home() {
 
   return (
     <div className="w-full overflow-x-auto p-4">
-      <div className="flex items-center gap-4 min-w-max mx-auto w-fit">
+      <div className="flex flex-col items-center gap-8">
+        <div className="flex items-center gap-4 min-w-max mx-auto w-fit">
         {/* Round 1 Left - 8 teams, 4 matchups */}
         <div className="relative flex flex-col justify-around h-[600px]">
           {[0, 1, 2, 3].map((matchup) => (
@@ -341,6 +341,17 @@ export default function Home() {
             </div>
           ))}
         </div>
+      </div>
+
+        {champion && (
+          <button
+            onClick={handleSubmit}
+            disabled={submitMutation.isPending}
+            className="px-8 py-3 bg-green-600 hover:bg-green-700 disabled:bg-gray-500 text-white font-bold rounded-lg transition-colors"
+          >
+            {submitMutation.isPending ? "Submitting..." : "Submit Bracket"}
+          </button>
+        )}
       </div>
     </div>
   );
