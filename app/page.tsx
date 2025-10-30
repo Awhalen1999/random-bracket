@@ -30,7 +30,7 @@ const ItemBox = ({
   const content = (
     <div
       className={`relative h-16 w-32 rounded-lg ${
-        item ? item.color : "bg-gray-100"
+        item ? item.color : "bg-transparent-background"
       } ${
         onClick ? "cursor-pointer" : ""
       } transition-all flex items-center justify-center text-white font-semibold text-sm p-2`}
@@ -49,7 +49,7 @@ const ItemBox = ({
             e.stopPropagation();
             onUndo();
           }}
-          className="absolute top-1 right-1 w-5 h-5 bg-white text-black rounded-full flex items-center justify-center text-xs font-bold hover:bg-gray-200"
+          className="absolute top-1 right-1 w-5 h-5 bg-transparent-background text-black rounded-full flex items-center justify-center font-bold hover:bg-transparent-background-hover"
         >
           ×
         </button>
