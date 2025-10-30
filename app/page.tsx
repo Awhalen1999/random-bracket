@@ -29,7 +29,7 @@ const ItemBox = ({
 }) => {
   const content = (
     <div
-      className={`relative h-14 w-32 rounded-lg ${
+      className={`relative h-16 w-32 rounded-lg ${
         item ? item.color : "bg-gray-100"
       } ${
         onClick ? "cursor-pointer" : ""
@@ -37,7 +37,7 @@ const ItemBox = ({
       onClick={onClick}
     >
       {item ? (
-        <span className="line-clamp-2 text-center text-xs leading-tight">
+        <span className="line-clamp-3 text-center text-[0.825rem] font-semibold leading-tight">
           {item.name}
         </span>
       ) : (
@@ -62,9 +62,9 @@ const ItemBox = ({
   }
 
   return (
-    <TooltipPrimitive.Root delayDuration={1000}>
+    <TooltipPrimitive.Root delayDuration={1500}>
       <TooltipTrigger asChild>{content}</TooltipTrigger>
-      <TooltipContent side="top" sideOffset={8}>
+      <TooltipContent side="top" sideOffset={2}>
         <p>{item.name}</p>
       </TooltipContent>
     </TooltipPrimitive.Root>
@@ -130,13 +130,16 @@ export default function Home() {
   };
 
   if (isLoading) {
-    return <div className="p-8 text-white">Loading today&apos;s bracket...</div>;
+    return (
+      <div className="p-8 text-white">Loading today&apos;s bracket...</div>
+    );
   }
 
   if (error) {
     return (
       <div className="p-8 text-white">
-        Error: {error instanceof Error ? error.message : "Failed to load bracket"}
+        Error:{" "}
+        {error instanceof Error ? error.message : "Failed to load bracket"}
       </div>
     );
   }
@@ -215,171 +218,175 @@ export default function Home() {
       <div className="w-full overflow-x-auto p-4">
         <div className="flex flex-col items-center gap-8">
           <div className="flex items-center gap-4 min-w-max mx-auto w-fit">
-        {/* Round 1 Left - 8 teams, 4 matchups */}
-        <div className="relative flex flex-col justify-around h-[600px]">
-          {[0, 1, 2, 3].map((matchup) => (
-            <div key={matchup} className="flex flex-col gap-2">
-              <ItemBox
-                item={round1[matchup * 2]}
-                onClick={() => handleItemClick(round1[matchup * 2], 1, matchup)}
-              />
-              <ItemBox
-                item={round1[matchup * 2 + 1]}
-                onClick={() =>
-                  handleItemClick(round1[matchup * 2 + 1], 1, matchup)
-                }
-              />
+            {/* Round 1 Left - 8 teams, 4 matchups */}
+            <div className="relative flex flex-col justify-around h-[675px]">
+              {[0, 1, 2, 3].map((matchup) => (
+                <div key={matchup} className="flex flex-col gap-2">
+                  <ItemBox
+                    item={round1[matchup * 2]}
+                    onClick={() =>
+                      handleItemClick(round1[matchup * 2], 1, matchup)
+                    }
+                  />
+                  <ItemBox
+                    item={round1[matchup * 2 + 1]}
+                    onClick={() =>
+                      handleItemClick(round1[matchup * 2 + 1], 1, matchup)
+                    }
+                  />
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
 
-        {/* Round 2 Left - 4 teams */}
-        <div className="relative flex flex-col justify-around h-[600px]">
-          {[0, 1].map((matchup) => (
-            <div key={matchup} className="flex flex-col gap-2">
+            {/* Round 2 Left - 4 teams */}
+            <div className="relative flex flex-col justify-around h-[675px]">
+              {[0, 1].map((matchup) => (
+                <div key={matchup} className="flex flex-col gap-2">
+                  <ItemBox
+                    item={round2[matchup * 2]}
+                    onClick={() =>
+                      round2[matchup * 2] &&
+                      handleItemClick(round2[matchup * 2]!, 2, matchup)
+                    }
+                    onUndo={() => handleUndo(2, matchup * 2)}
+                    showUndo={true}
+                  />
+                  <ItemBox
+                    item={round2[matchup * 2 + 1]}
+                    onClick={() =>
+                      round2[matchup * 2 + 1] &&
+                      handleItemClick(round2[matchup * 2 + 1]!, 2, matchup)
+                    }
+                    onUndo={() => handleUndo(2, matchup * 2 + 1)}
+                    showUndo={true}
+                  />
+                </div>
+              ))}
+            </div>
+
+            {/* Round 3 Left - 2 teams */}
+            <div className="relative flex flex-col justify-around h-[675px]">
+              <div className="flex flex-col gap-2">
+                <ItemBox
+                  item={round3[0]}
+                  onClick={() => round3[0] && handleItemClick(round3[0], 3, 0)}
+                  onUndo={() => handleUndo(3, 0)}
+                  showUndo={true}
+                />
+                <ItemBox
+                  item={round3[1]}
+                  onClick={() => round3[1] && handleItemClick(round3[1], 3, 0)}
+                  onUndo={() => handleUndo(3, 1)}
+                  showUndo={true}
+                />
+              </div>
+            </div>
+
+            {/* Finals Left - 1 team */}
+            <div className="relative flex flex-col justify-center h-[675px]">
               <ItemBox
-                item={round2[matchup * 2]}
-                onClick={() =>
-                  round2[matchup * 2] &&
-                  handleItemClick(round2[matchup * 2]!, 2, matchup)
-                }
-                onUndo={() => handleUndo(2, matchup * 2)}
+                item={round4[0]}
+                onClick={() => round4[0] && handleItemClick(round4[0], 4, 0)}
+                onUndo={() => handleUndo(4, 0)}
                 showUndo={true}
               />
+            </div>
+
+            {/* Champion - center */}
+            <div className="relative flex flex-col justify-center h-[675px]">
               <ItemBox
-                item={round2[matchup * 2 + 1]}
-                onClick={() =>
-                  round2[matchup * 2 + 1] &&
-                  handleItemClick(round2[matchup * 2 + 1]!, 2, matchup)
-                }
-                onUndo={() => handleUndo(2, matchup * 2 + 1)}
+                item={champion}
+                onUndo={() => handleUndo(5, 0)}
                 showUndo={true}
               />
             </div>
-          ))}
-        </div>
 
-        {/* Round 3 Left - 2 teams */}
-        <div className="relative flex flex-col justify-around h-[600px]">
-          <div className="flex flex-col gap-2">
-            <ItemBox
-              item={round3[0]}
-              onClick={() => round3[0] && handleItemClick(round3[0], 3, 0)}
-              onUndo={() => handleUndo(3, 0)}
-              showUndo={true}
-            />
-            <ItemBox
-              item={round3[1]}
-              onClick={() => round3[1] && handleItemClick(round3[1], 3, 0)}
-              onUndo={() => handleUndo(3, 1)}
-              showUndo={true}
-            />
+            {/* Finals Right - 1 team */}
+            <div className="relative flex flex-col justify-center h-[675px]">
+              <ItemBox
+                item={round4[1]}
+                onClick={() => round4[1] && handleItemClick(round4[1], 4, 0)}
+                onUndo={() => handleUndo(4, 1)}
+                showUndo={true}
+              />
+            </div>
+
+            {/* RIGHT SIDE */}
+
+            {/* Round 3 Right - 2 teams */}
+            <div className="relative flex flex-col justify-around h-[675px]">
+              <div className="flex flex-col gap-2">
+                <ItemBox
+                  item={round3[2]}
+                  onClick={() => round3[2] && handleItemClick(round3[2], 3, 1)}
+                  onUndo={() => handleUndo(3, 2)}
+                  showUndo={true}
+                />
+                <ItemBox
+                  item={round3[3]}
+                  onClick={() => round3[3] && handleItemClick(round3[3], 3, 1)}
+                  onUndo={() => handleUndo(3, 3)}
+                  showUndo={true}
+                />
+              </div>
+            </div>
+
+            {/* Round 2 Right - 4 teams */}
+            <div className="relative flex flex-col justify-around h-[675px]">
+              {[2, 3].map((matchup) => (
+                <div key={matchup} className="flex flex-col gap-2">
+                  <ItemBox
+                    item={round2[matchup * 2]}
+                    onClick={() =>
+                      round2[matchup * 2] &&
+                      handleItemClick(round2[matchup * 2]!, 2, matchup)
+                    }
+                    onUndo={() => handleUndo(2, matchup * 2)}
+                    showUndo={true}
+                  />
+                  <ItemBox
+                    item={round2[matchup * 2 + 1]}
+                    onClick={() =>
+                      round2[matchup * 2 + 1] &&
+                      handleItemClick(round2[matchup * 2 + 1]!, 2, matchup)
+                    }
+                    onUndo={() => handleUndo(2, matchup * 2 + 1)}
+                    showUndo={true}
+                  />
+                </div>
+              ))}
+            </div>
+
+            {/* Round 1 Right - 8 teams, 4 matchups */}
+            <div className="relative flex flex-col justify-around h-[675px]">
+              {[4, 5, 6, 7].map((matchup) => (
+                <div key={matchup} className="flex flex-col gap-2">
+                  <ItemBox
+                    item={round1[matchup * 2]}
+                    onClick={() =>
+                      handleItemClick(round1[matchup * 2], 1, matchup)
+                    }
+                  />
+                  <ItemBox
+                    item={round1[matchup * 2 + 1]}
+                    onClick={() =>
+                      handleItemClick(round1[matchup * 2 + 1], 1, matchup)
+                    }
+                  />
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/* Finals Left - 1 team */}
-        <div className="relative flex flex-col justify-center h-[600px]">
-          <ItemBox
-            item={round4[0]}
-            onClick={() => round4[0] && handleItemClick(round4[0], 4, 0)}
-            onUndo={() => handleUndo(4, 0)}
-            showUndo={true}
-          />
-        </div>
-
-        {/* Champion - center */}
-        <div className="relative flex flex-col justify-center h-[600px]">
-          <ItemBox
-            item={champion}
-            onUndo={() => handleUndo(5, 0)}
-            showUndo={true}
-          />
-        </div>
-
-        {/* Finals Right - 1 team */}
-        <div className="relative flex flex-col justify-center h-[600px]">
-          <ItemBox
-            item={round4[1]}
-            onClick={() => round4[1] && handleItemClick(round4[1], 4, 0)}
-            onUndo={() => handleUndo(4, 1)}
-            showUndo={true}
-          />
-        </div>
-
-        {/* RIGHT SIDE */}
-
-        {/* Round 3 Right - 2 teams */}
-        <div className="relative flex flex-col justify-around h-[600px]">
-          <div className="flex flex-col gap-2">
-            <ItemBox
-              item={round3[2]}
-              onClick={() => round3[2] && handleItemClick(round3[2], 3, 1)}
-              onUndo={() => handleUndo(3, 2)}
-              showUndo={true}
-            />
-            <ItemBox
-              item={round3[3]}
-              onClick={() => round3[3] && handleItemClick(round3[3], 3, 1)}
-              onUndo={() => handleUndo(3, 3)}
-              showUndo={true}
-            />
-          </div>
-        </div>
-
-        {/* Round 2 Right - 4 teams */}
-        <div className="relative flex flex-col justify-around h-[600px]">
-          {[2, 3].map((matchup) => (
-            <div key={matchup} className="flex flex-col gap-2">
-              <ItemBox
-                item={round2[matchup * 2]}
-                onClick={() =>
-                  round2[matchup * 2] &&
-                  handleItemClick(round2[matchup * 2]!, 2, matchup)
-                }
-                onUndo={() => handleUndo(2, matchup * 2)}
-                showUndo={true}
-              />
-              <ItemBox
-                item={round2[matchup * 2 + 1]}
-                onClick={() =>
-                  round2[matchup * 2 + 1] &&
-                  handleItemClick(round2[matchup * 2 + 1]!, 2, matchup)
-                }
-                onUndo={() => handleUndo(2, matchup * 2 + 1)}
-                showUndo={true}
-              />
-            </div>
-          ))}
-        </div>
-
-        {/* Round 1 Right - 8 teams, 4 matchups */}
-        <div className="relative flex flex-col justify-around h-[600px]">
-          {[4, 5, 6, 7].map((matchup) => (
-            <div key={matchup} className="flex flex-col gap-2">
-              <ItemBox
-                item={round1[matchup * 2]}
-                onClick={() => handleItemClick(round1[matchup * 2], 1, matchup)}
-              />
-              <ItemBox
-                item={round1[matchup * 2 + 1]}
-                onClick={() =>
-                  handleItemClick(round1[matchup * 2 + 1], 1, matchup)
-                }
-              />
-            </div>
-          ))}
-        </div>
-      </div>
-
-        {champion && (
-          <button
-            onClick={handleSubmit}
-            disabled={submitMutation.isPending}
-            className="px-8 py-3 bg-green-600 hover:bg-green-700 disabled:bg-gray-500 text-white font-bold rounded-lg transition-colors"
-          >
-            {submitMutation.isPending ? "Submitting..." : "Submit Bracket"}
-          </button>
-        )}
+          {champion && (
+            <button
+              onClick={handleSubmit}
+              disabled={submitMutation.isPending}
+              className="px-8 py-3 bg-green-600 hover:bg-green-700 disabled:bg-gray-500 text-white font-bold rounded-lg transition-colors"
+            >
+              {submitMutation.isPending ? "Submitting..." : "Submit Bracket"}
+            </button>
+          )}
         </div>
       </div>
     </TooltipProvider>
