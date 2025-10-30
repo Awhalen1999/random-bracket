@@ -134,8 +134,8 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-900 overflow-x-auto">
-      <div className="flex justify-center items-center gap-4">
+    <div className="w-full overflow-x-auto p-4">
+      <div className="flex items-center gap-4 min-w-max mx-auto w-fit">
         {/* Round 1 Left - 8 teams, 4 matchups */}
         <div className="relative flex flex-col justify-around h-[600px]">
           {[0, 1, 2, 3].map((matchup) => (
