@@ -61,7 +61,7 @@ export default function Header() {
           </DialogTrigger>
           <DialogContent className="max-w-md">
             <DialogHeader className="mb-2">
-              <DialogTitle>RANDOM BRACKET</DialogTitle>
+              <DialogTitle>RANDOM BRACKET DAILY</DialogTitle>
               <DialogDescription>
                 Learn about Random Bracket and how to play
               </DialogDescription>
