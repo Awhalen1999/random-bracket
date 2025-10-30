@@ -29,7 +29,7 @@ const ItemBox = ({
 }) => {
   const content = (
     <div
-      className={`relative h-16 w-32 rounded-lg ${
+      className={`relative h-16 w-32 rounded-lg group ${
         item ? item.color : "bg-transparent-background"
       } ${
         onClick ? "cursor-pointer" : ""
@@ -49,7 +49,7 @@ const ItemBox = ({
             e.stopPropagation();
             onUndo();
           }}
-          className="absolute top-1 right-1 w-5 h-5 bg-transparent-background text-black rounded-full flex items-center justify-center font-bold hover:bg-transparent-background-hover"
+          className="absolute top-1 right-1 w-5 h-5 hover:bg-transparent-background-hover text-black rounded-full flex items-center justify-center font-bold cursor-pointer text-xl opacity-0 group-hover:opacity-100 transition-opacity"
         >
           ×
         </button>
