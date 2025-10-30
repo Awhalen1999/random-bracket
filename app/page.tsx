@@ -31,13 +31,11 @@ const ItemBox = ({
     <div
       className={`relative h-16 w-32 rounded-lg group ${
         item ? item.color : "bg-transparent-background"
-      } ${
-        onClick ? "cursor-pointer" : ""
-      } transition-all flex items-center justify-center text-white font-semibold text-sm p-2`}
+      }  transition-all flex items-center justify-center p-2 cursor-pointer `}
       onClick={onClick}
     >
       {item ? (
-        <span className="line-clamp-3 text-center text-[0.825rem] font-semibold leading-tight">
+        <span className="line-clamp-3 text-center text-[0.825rem] font-semibold leading-tight text-white">
           {item.name}
         </span>
       ) : (
@@ -49,7 +47,7 @@ const ItemBox = ({
             e.stopPropagation();
             onUndo();
           }}
-          className="absolute top-1 right-1 w-5 h-5 hover:bg-transparent-background-hover text-black rounded-full flex items-center justify-center font-bold cursor-pointer text-xl opacity-0 group-hover:opacity-100 transition-opacity"
+          className="absolute top-1 right-1 w-5 h-5 hover:bg-transparent-button-hover bg-transparent-button text-black rounded-full flex items-center justify-center font-bold cursor-pointer text-md opacity-0 group-hover:opacity-100 transition-opacity"
         >
           ×
         </button>
@@ -62,7 +60,7 @@ const ItemBox = ({
   }
 
   return (
-    <TooltipPrimitive.Root delayDuration={1500}>
+    <TooltipPrimitive.Root delayDuration={1750}>
       <TooltipTrigger asChild>{content}</TooltipTrigger>
       <TooltipContent side="top" sideOffset={2}>
         <p>{item.name}</p>
@@ -87,8 +85,8 @@ export default function Home() {
     "bg-indigo-500",
     "bg-orange-500",
     "bg-teal-500",
-    "bg-cyan-500",
-    "bg-lime-500",
+    "bg-cyan-600",
+    "bg-lime-600",
     "bg-amber-500",
     "bg-emerald-500",
     "bg-violet-500",
