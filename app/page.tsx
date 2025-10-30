@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useTodaysBracket, useSubmitBracket } from "@/hooks/useBracket";
+import { useRouter } from "next/navigation";
 
 type Team = {
-  id: number;
+  id: string;
   color: string;
   name: string;
 };
@@ -43,30 +45,79 @@ const TeamBox = ({
 );
 
 export default function Home() {
-  const initialTeams: Team[] = [
-    { id: 1, color: "bg-red-500", name: "Team 1" },
-    { id: 2, color: "bg-blue-500", name: "Team 2" },
-    { id: 3, color: "bg-green-500", name: "Team 3" },
-    { id: 4, color: "bg-yellow-500", name: "Team 4" },
-    { id: 5, color: "bg-purple-500", name: "Team 5" },
-    { id: 6, color: "bg-pink-500", name: "Team 6" },
-    { id: 7, color: "bg-indigo-500", name: "Team 7" },
-    { id: 8, color: "bg-orange-500", name: "Team 8" },
-    { id: 9, color: "bg-teal-500", name: "Team 9" },
-    { id: 10, color: "bg-cyan-500", name: "Team 10" },
-    { id: 11, color: "bg-lime-500", name: "Team 11" },
-    { id: 12, color: "bg-amber-500", name: "Team 12" },
-    { id: 13, color: "bg-emerald-500", name: "Team 13" },
-    { id: 14, color: "bg-violet-500", name: "Team 14" },
-    { id: 15, color: "bg-fuchsia-500", name: "Team 15" },
-    { id: 16, color: "bg-rose-500", name: "Team 16" },
+  const router = useRouter();
+  const { data: bracketData, isLoading, error } = useTodaysBracket();
+  const submitMutation = useSubmitBracket();
+
+  // Color palette for teams
+  const colors = [
+    "bg-red-500",
+    "bg-blue-500",
+    "bg-green-500",
+    "bg-yellow-500",
+    "bg-purple-500",
+    "bg-pink-500",
+    "bg-indigo-500",
+    "bg-orange-500",
+    "bg-teal-500",
+    "bg-cyan-500",
+    "bg-lime-500",
+    "bg-amber-500",
+    "bg-emerald-500",
+    "bg-violet-500",
+    "bg-fuchsia-500",
+    "bg-rose-500",
   ];
 
-  const [round1] = useState<Team[]>(initialTeams);
+  // Transform API data to include colors
+  const round1: Team[] =
+    bracketData?.items.map((item, index) => ({
+      id: item.id,
+      name: item.name,
+      color: colors[index % colors.length],
+    })) || [];
+
   const [round2, setRound2] = useState<(Team | null)[]>(Array(8).fill(null));
   const [round3, setRound3] = useState<(Team | null)[]>(Array(4).fill(null));
   const [round4, setRound4] = useState<(Team | null)[]>(Array(2).fill(null));
   const [champion, setChampion] = useState<Team | null>(null);
+
+  // Submit champion when selected
+  useEffect(() => {
+    if (champion) {
+      submitMutation.mutate(
+        { winnerId: champion.id },
+        {
+          onSuccess: () => {
+            router.push("/results");
+          },
+          onError: (error) => {
+            console.error("Failed to submit bracket:", error);
+            // Still redirect to results if already voted (429)
+            if (error.message.includes("already submitted")) {
+              router.push("/results");
+            }
+          },
+        }
+      );
+    }
+  }, [champion, submitMutation, router]);
+
+  if (isLoading) {
+    return <div className="p-8 text-white">Loading today&apos;s bracket...</div>;
+  }
+
+  if (error) {
+    return (
+      <div className="p-8 text-white">
+        Error: {error instanceof Error ? error.message : "Failed to load bracket"}
+      </div>
+    );
+  }
+
+  if (round1.length === 0) {
+    return <div className="p-8 text-white">No bracket available today</div>;
+  }
 
   const handleTeamClick = (team: Team, round: number, matchupIndex: number) => {
     if (round === 1) {
