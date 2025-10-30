@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { HelpCircle } from "lucide-react";
 import {
   Dialog,
@@ -14,6 +15,22 @@ import CountdownTimer from "./countdown-timer";
 
 export default function Header() {
   const router = useRouter();
+  const [isHelpOpen, setIsHelpOpen] = useState(() => {
+    // Check if user has seen the help dialog before on initial render
+    if (typeof window !== "undefined") {
+      const hasSeenHelp = localStorage.getItem("random-bracket-help-seen");
+      return !hasSeenHelp;
+    }
+    return false;
+  });
+
+  const handleHelpClose = (open: boolean) => {
+    setIsHelpOpen(open);
+    if (!open && typeof window !== "undefined") {
+      // Mark help as seen when dialog is closed
+      localStorage.setItem("random-bracket-help-seen", "true");
+    }
+  };
 
   return (
     <header className="flex items-center justify-between px-8 py-4">
@@ -36,7 +53,7 @@ export default function Header() {
           Results
         </span>
 
-        <Dialog>
+        <Dialog open={isHelpOpen} onOpenChange={handleHelpClose}>
           <DialogTrigger asChild>
             <button className="text-zinc-300 hover:text-white transition-colors">
               <HelpCircle size={20} />
