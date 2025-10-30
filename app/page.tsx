@@ -9,6 +9,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import * as TooltipPrimitive from "@radix-ui/react-tooltip";
+import { toast } from "sonner";
 
 type Item = {
   id: string;
@@ -152,17 +153,26 @@ export default function Home() {
       newRound2[matchupIndex] = item;
       setRound2(newRound2);
     } else if (round === 2) {
-      if (!round2.every((i) => i !== null)) return;
+      if (!round2.every((i) => i !== null)) {
+        toast.info("Complete the previous round first!");
+        return;
+      }
       const newRound3 = [...round3];
       newRound3[matchupIndex] = item;
       setRound3(newRound3);
     } else if (round === 3) {
-      if (!round3.every((i) => i !== null)) return;
+      if (!round3.every((i) => i !== null)) {
+        toast.info("Complete the previous round first!");
+        return;
+      }
       const newRound4 = [...round4];
       newRound4[matchupIndex] = item;
       setRound4(newRound4);
     } else if (round === 4) {
-      if (!round4.every((i) => i !== null)) return;
+      if (!round4.every((i) => i !== null)) {
+        toast.info("Complete the previous round first!");
+        return;
+      }
       setChampion(item);
     }
   };
