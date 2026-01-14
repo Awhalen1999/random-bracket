@@ -1,6 +1,7 @@
 "use client";
 
 import { useResults } from "@/hooks/useBracket";
+import { OFFLINE_MODE } from "@/lib/offline-config";
 
 export default function ResultsPage() {
   const today = new Date().toISOString().split("T")[0];
@@ -25,6 +26,11 @@ export default function ResultsPage() {
   return (
     <div className="p-8 text-white">
       <h1 className="text-3xl font-bold mb-4">Results for {data.date}</h1>
+      {OFFLINE_MODE && (
+        <p className="text-yellow-400 text-sm mb-4">
+          Showing your local submissions (offline mode)
+        </p>
+      )}
       <p className="mb-8">Total Votes: {data.totalVotes}</p>
 
       <pre className="bg-zinc-800 p-4 rounded overflow-auto">

@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTodaysBracket, useSubmitBracket } from "@/hooks/useBracket";
 import { useRouter } from "next/navigation";
+import { OFFLINE_MODE } from "@/lib/offline-config";
 import {
   TooltipContent,
   TooltipProvider,
@@ -107,6 +108,20 @@ export default function Home() {
   const [round3, setRound3] = useState<(Item | null)[]>(Array(4).fill(null));
   const [round4, setRound4] = useState<(Item | null)[]>(Array(2).fill(null));
   const [champion, setChampion] = useState<Item | null>(null);
+
+  // Show offline mode toast once per session
+  useEffect(() => {
+    if (OFFLINE_MODE) {
+      const hasShownToast = sessionStorage.getItem("random-bracket-offline-toast-shown");
+      if (!hasShownToast) {
+        toast.info(
+          "Hey! This app is currently using offline local data while I migrate services. Real data and history will be available again soon! - Alex",
+          { duration: 8000 }
+        );
+        sessionStorage.setItem("random-bracket-offline-toast-shown", "true");
+      }
+    }
+  }, []);
 
   const handleSubmit = () => {
     if (!champion) return;

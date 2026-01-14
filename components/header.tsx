@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { HelpCircle } from "lucide-react";
+import { OFFLINE_MODE } from "@/lib/offline-config";
 import {
   Dialog,
   DialogContent,
@@ -34,12 +35,19 @@ export default function Header() {
 
   return (
     <header className="flex items-center justify-between px-8 py-4">
-      <h1
-        className="text-2xl font-bold text-white cursor-pointer"
-        onClick={() => router.push("/")}
-      >
-        Random Bracket
-      </h1>
+      <div className="flex items-center gap-3">
+        <h1
+          className="text-2xl font-bold text-white cursor-pointer"
+          onClick={() => router.push("/")}
+        >
+          Random Bracket
+        </h1>
+        {OFFLINE_MODE && (
+          <span className="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded font-medium">
+            Offline
+          </span>
+        )}
+      </div>
 
       <div className="absolute left-1/2 -translate-x-1/2">
         <CountdownTimer />
