@@ -24,6 +24,7 @@ export default function Header() {
     }
     return false;
   });
+  const [isOfflineOpen, setIsOfflineOpen] = useState(false);
 
   const handleHelpClose = (open: boolean) => {
     setIsHelpOpen(open);
@@ -43,9 +44,38 @@ export default function Header() {
           Random Bracket
         </h1>
         {OFFLINE_MODE && (
-          <span className="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded font-medium">
-            Offline
-          </span>
+          <Dialog open={isOfflineOpen} onOpenChange={setIsOfflineOpen}>
+            <DialogTrigger asChild>
+              <button className="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded font-medium hover:bg-yellow-500/30 transition-colors cursor-pointer">
+                Offline
+              </button>
+            </DialogTrigger>
+            <DialogContent className="max-w-md">
+              <DialogHeader className="mb-2">
+                <DialogTitle>Offline Mode</DialogTitle>
+                <DialogDescription>
+                  Why this app is running in offline mode
+                </DialogDescription>
+              </DialogHeader>
+
+              <div className="space-y-4 text-sm text-zinc-300">
+                <p>
+                  Hey! This app is currently using offline local data while I
+                  migrate my backend services.
+                </p>
+                <p>
+                  Everything still works the same way - you can complete
+                  brackets and your choices are saved locally in your browser.
+                  However, you won&apos;t see community voting results until the
+                  backend is back online.
+                </p>
+                <p>
+                  Real data and history will be available again soon!
+                </p>
+                <p className="text-zinc-400">- Alex</p>
+              </div>
+            </DialogContent>
+          </Dialog>
         )}
       </div>
 
