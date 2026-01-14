@@ -44,38 +44,55 @@ export default function Header() {
           Random Bracket
         </h1>
         {OFFLINE_MODE && (
-          <Dialog open={isOfflineOpen} onOpenChange={setIsOfflineOpen}>
-            <DialogTrigger asChild>
-              <button className="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded font-medium hover:bg-yellow-500/30 transition-colors cursor-pointer">
-                Offline
-              </button>
-            </DialogTrigger>
-            <DialogContent className="max-w-md">
-              <DialogHeader className="mb-2">
-                <DialogTitle>Offline Mode</DialogTitle>
-                <DialogDescription>
-                  Why this app is running in offline mode
-                </DialogDescription>
-              </DialogHeader>
+          <>
+            <Dialog open={isOfflineOpen} onOpenChange={setIsOfflineOpen}>
+              <DialogTrigger asChild>
+                <button className="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded font-medium hover:bg-yellow-500/30 transition-colors cursor-pointer">
+                  Offline
+                </button>
+              </DialogTrigger>
+              <DialogContent className="max-w-md">
+                <DialogHeader className="mb-2">
+                  <DialogTitle>Offline Mode</DialogTitle>
+                  <DialogDescription>
+                    Why this app is running in offline mode
+                  </DialogDescription>
+                </DialogHeader>
 
-              <div className="space-y-4 text-sm text-zinc-300">
-                <p>
-                  Hey! This app is currently using offline local data while I
-                  migrate my backend services.
-                </p>
-                <p>
-                  Everything still works the same way - you can complete
-                  brackets and your choices are saved locally in your browser.
-                  However, you won&apos;t see community voting results until the
-                  backend is back online.
-                </p>
-                <p>
-                  Real data and history will be available again soon!
-                </p>
-                <p className="text-zinc-400">- Alex</p>
-              </div>
-            </DialogContent>
-          </Dialog>
+                <div className="space-y-4 text-sm text-zinc-300">
+                  <p>
+                    Hey! This app is currently using offline local data while I
+                    migrate my backend services.
+                  </p>
+                  <p>
+                    Everything still works the same way - you can complete
+                    brackets and your choices are saved locally in your browser.
+                    However, you won&apos;t see community voting results until
+                    the backend is back online.
+                  </p>
+                  <p>Real data and history will be available again soon!</p>
+                  <p className="text-zinc-400">- Alex ❤️</p>
+                </div>
+              </DialogContent>
+            </Dialog>
+            <span
+              className="inline-block text-xs"
+              style={{ animation: "bounce-horizontal 1s ease-in-out infinite" }}
+            >
+              👈
+            </span>
+            <style jsx>{`
+              @keyframes bounce-horizontal {
+                0%,
+                100% {
+                  transform: translateX(0);
+                }
+                50% {
+                  transform: translateX(-4px);
+                }
+              }
+            `}</style>
+          </>
         )}
       </div>
 
