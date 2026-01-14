@@ -109,17 +109,17 @@ export default function Home() {
   const [round4, setRound4] = useState<(Item | null)[]>(Array(2).fill(null));
   const [champion, setChampion] = useState<Item | null>(null);
 
-  // Show offline mode toast once per session
+  // Show offline mode toast on every page load
   useEffect(() => {
     if (OFFLINE_MODE) {
-      const hasShownToast = sessionStorage.getItem("random-bracket-offline-toast-shown");
-      if (!hasShownToast) {
+      // Small delay to ensure Toaster is mounted on initial page load
+      const timer = setTimeout(() => {
         toast.info(
-          "Hey! This app is currently using offline local data while I migrate services. Real data and history will be available again soon! - Alex",
+          'Hey! This app is currently using offline local data while I migrate services. Real data and history will be available again soon! Click the "Offline" button to learn more. - Alex ❤️',
           { duration: 8000 }
         );
-        sessionStorage.setItem("random-bracket-offline-toast-shown", "true");
-      }
+      }, 100);
+      return () => clearTimeout(timer);
     }
   }, []);
 
