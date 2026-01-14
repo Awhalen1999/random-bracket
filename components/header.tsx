@@ -70,6 +70,10 @@ export default function Header() {
                     However, you won&apos;t see community voting results until
                     the backend is back online.
                   </p>
+                  <p>
+                    The bracket items will also stay the same until the backend
+                    is restored, since the item list is stored in the database.
+                  </p>
                   <p>Real data and history will be available again soon!</p>
                   <p className="text-zinc-400">- Alex ❤️</p>
                 </div>
