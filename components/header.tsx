@@ -35,10 +35,11 @@ export default function Header() {
   };
 
   return (
-    <header className="flex items-center justify-between px-8 py-4">
-      <div className="flex items-center gap-3">
+    <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between px-4 sm:px-8 py-4 gap-3 sm:gap-0 relative">
+      {/* Top row: Title and Offline chip (mobile) / Left side (desktop) */}
+      <div className="flex items-center gap-3 justify-center sm:justify-start">
         <h1
-          className="text-2xl font-bold text-white cursor-pointer"
+          className="text-xl sm:text-2xl font-bold text-white cursor-pointer"
           onClick={() => router.push("/")}
         >
           Random Bracket
@@ -80,7 +81,7 @@ export default function Header() {
               </DialogContent>
             </Dialog>
             <span
-              className="inline-block text-xs"
+              className="hidden sm:inline-block text-xs"
               style={{ animation: "bounce-horizontal 1s ease-in-out infinite" }}
             >
               👈
@@ -100,11 +101,13 @@ export default function Header() {
         )}
       </div>
 
-      <div className="absolute left-1/2 -translate-x-1/2">
+      {/* Middle: Countdown Timer */}
+      <div className="flex justify-center sm:absolute sm:left-1/2 sm:-translate-x-1/2">
         <CountdownTimer />
       </div>
 
-      <nav className="flex items-center gap-6">
+      {/* Bottom: Nav items (mobile) / Right side (desktop) */}
+      <nav className="flex items-center gap-6 justify-center sm:justify-end">
         <span
           className="text-zinc-300 hover:text-white transition-colors font-medium cursor-pointer"
           onClick={() => router.push("/results")}
